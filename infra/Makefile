@@ -1,0 +1,2 @@
+deploy:
+	tofu apply
