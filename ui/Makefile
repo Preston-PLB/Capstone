@@ -1,4 +1,4 @@
-BASE_URL="us-south1-docker.pkg.dev/pbaxter-infra/capstone-repo"
+BASE_URL="us-central1-docker.pkg.dev/pbaxter-infra/capstone-repo"
 
 
 build:
