@@ -29,13 +29,14 @@ templ Head() {
 	</head>
 }
 
-templ Hello(name string) {
+templ LandingPage(auth bool) {
 	<!DOCTYPE html>
 	<html>
 		@Head()
 		<body class="text-gray-800 antialiased">
-			@Nav()
+			@Nav(auth)
 			@Content()
 		</body>
+		@toggleNavBar()
 	</html>
 }

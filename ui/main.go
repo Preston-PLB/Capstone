@@ -12,7 +12,7 @@ func main() {
 	r.GET("/", func(c *gin.Context) {
 		raw := []byte{}
 		buf := bytes.NewBuffer(raw)
-		templates.Hello("str").Render(c.Request.Context(), buf)
+		templates.LandingPage(false).Render(c.Request.Context(), buf)
 
 
 		c.Data(200, "text/html", []byte(buf.String()))
