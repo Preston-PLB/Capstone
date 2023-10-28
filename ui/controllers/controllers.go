@@ -3,7 +3,6 @@ package controllers
 import (
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/config"
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db"
-	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -25,16 +24,16 @@ func BuildRouter(r *gin.Engine) {
 		ForceColors:               true,
 	})
 
-	r.GET("/", middleware.AuthMiddleware(false) ,LandingPage)
-	r.GET("/login", middleware.AuthMiddleware(false), LoginPage)
-	r.GET("/signup", middleware.AuthMiddleware(false), SignUpPage)
+	r.GET("/", LandingPage)
+	r.GET("/login", AuthMiddleware(false), LoginPage)
+	r.GET("/signup",AuthMiddleware(false), SignUpPage)
 
 	r.POST("/login", LoginHandler)
 	r.POST("/signup", SignUpHandler)
 	r.POST("/logout", LogoutHandler)
 
 	dashboard := r.Group("/dashboard")
-	dashboard.Use(middleware.AuthMiddleware(true))
+	dashboard.Use(AuthMiddleware(true))
 	dashboard.GET("/", DashboardPage)
 }
 

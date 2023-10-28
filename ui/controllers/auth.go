@@ -70,11 +70,17 @@ func SignUpHandler (c *gin.Context) {
 		return
 	}
 
+	now := time.Now().Unix()
+	exp := time.Now().Add(12 * time.Hour).Unix()
 	//build jwt
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
-		jwt.MapClaims{
-			"sub": user.UserId,
-			"exp": time.Now().Add(12 * time.Hour).Unix(),
+		AuthClaims{
+			Subject:   user.UserId,
+			Expires:   exp,
+			IssuedAt:  now,
+			NotBefore: now,
+			Issuer:    "capstone.preston-baxter.com",
+			Audience:  "capstone.preston-baxter.com",
 		},
 	)
 
@@ -132,11 +138,17 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
+	now := time.Now().Unix()
+	exp := time.Now().Add(12 * time.Hour).Unix()
 	//build jwt
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
-		jwt.MapClaims{
-			"sub": user.UserId,
-			"exp": time.Now().Add(12 * time.Hour).Unix(),
+		AuthClaims{
+			Subject:   user.UserId,
+			Expires:   exp,
+			IssuedAt:  now,
+			NotBefore: now,
+			Issuer:    "capstone.preston-baxter.com",
+			Audience:  "capstone.preston-baxter.com",
 		},
 	)
 
