@@ -1,29 +1,14 @@
 package main
 
 import (
-	"bytes"
-
+	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/controllers"
 	"github.com/gin-gonic/gin"
-	"preston-baxter.com/capstone/frontend-service/templates"
 )
 
 func main() {
 	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
-		raw := []byte{}
-		buf := bytes.NewBuffer(raw)
-		templates.LandingPage(false).Render(c.Request.Context(), buf)
 
+	controllers.BuildRouter(r)
 
-		c.Data(200, "text/html", []byte(buf.String()))
-	})
-	r.GET("/login", func(c *gin.Context) {
-		raw := []byte{}
-		buf := bytes.NewBuffer(raw)
-		templates.LoginPage().Render(c.Request.Context(), buf)
-
-
-		c.Data(200, "text/html", []byte(buf.String()))
-	})
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	r.Run()
 }
