@@ -2,7 +2,10 @@ module preston-baxter.com/capstone/frontend-service
 
 go 1.19
 
-require github.com/gin-gonic/gin v1.9.1
+require (
+	github.com/a-h/templ v0.2.408
+	github.com/gin-gonic/gin v1.9.1
+)
 
 require (
 	github.com/bytedance/sonic v1.9.1 // indirect
