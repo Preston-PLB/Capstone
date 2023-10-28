@@ -26,11 +26,13 @@ func SignUpHandler (c *gin.Context) {
 	reqBody.Password = c.Request.FormValue("password")
 
 	if reqBody.Email == "" {
+		log.Warn("Request contained no email")
 		renderTempl(c, templates.SignupPage("Please provide an email"))
 		return
 	}
 
 	if reqBody.Password == "" {
+		log.Warn("Request contained no password")
 		renderTempl(c, templates.SignupPage("Please provide a password"))
 		return
 	}
@@ -38,11 +40,13 @@ func SignUpHandler (c *gin.Context) {
 	//Verify username and password
 	user, err := mongo.FindUserByEmail(reqBody.Email)
 	if err != nil {
+		log.WithError(err).Errorf("Failed to lookup user: %s", reqBody.Email)
 		renderTempl(c, templates.SignupPage("Error occured. Please try again later"))
 		return
 	}
 
 	if user != nil {
+		log.Warnf("User: %s, already exists", reqBody.Email)
 		renderTempl(c, templates.SignupPage(fmt.Sprintf("user already exists for %s", reqBody.Email)))
 		return
 	}
@@ -51,6 +55,7 @@ func SignUpHandler (c *gin.Context) {
 
 	passHash, err := bcrypt.GenerateFromPassword([]byte(reqBody.Password), 10)
 	if err != nil {
+		log.WithError(err).Errorf("Passowrd hash failed for user: %s", reqBody.Email)
 		renderTempl(c, templates.SignupPage("Signup failed. Please try again later"))
 		return
 	}
@@ -60,6 +65,7 @@ func SignUpHandler (c *gin.Context) {
 
 	err = mongo.SaveModel(user)
 	if err != nil {
+		log.WithError(err).Errorf("Failed to write user to DB for user: %s", reqBody.Email)
 		renderTempl(c, templates.SignupPage("Signup failed. Please try again later"))
 		return
 	}
@@ -72,8 +78,9 @@ func SignUpHandler (c *gin.Context) {
 		},
 	)
 
-	jwtStr, err := token.SignedString(conf.JwtSecret)
+	jwtStr, err := token.SignedString([]byte(conf.JwtSecret))
 	if err != nil {
+		log.WithError(err).Errorf("Failed to encode jwt for user: %s", reqBody.Email)
 		renderTempl(c, templates.SignupPage("Signup failed. Please try again later"))
 		return
 	}
@@ -94,11 +101,13 @@ func LoginHandler(c *gin.Context) {
 	reqBody.Password = c.Request.FormValue("password")
 
 	if reqBody.Email == "" {
+		log.Warn("Request contained no email")
 		renderTempl(c, templates.LoginPage("Please provide an email"))
 		return
 	}
 
 	if reqBody.Password == "" {
+		log.Warn("Request contained no password")
 		renderTempl(c, templates.LoginPage("Please provide a password"))
 		return
 	}
@@ -106,17 +115,20 @@ func LoginHandler(c *gin.Context) {
 	//Verify username and password
 	user, err := mongo.FindUserByEmail(reqBody.Email)
 	if err != nil {
+		log.WithError(err).Errorf("Failed to lookup user: %s", reqBody.Email)
 		renderTempl(c, templates.LoginPage(err.Error()))
 		return
 	}
 
 	if user == nil {
+		log.Warnf("No user was found for: %s", reqBody.Email)
 		renderTempl(c, templates.LoginPage(fmt.Sprintf("No user found for %s", reqBody.Email)))
 		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PassowrdHash), []byte(reqBody.Password)); err != nil {
-		renderTempl(c, templates.LoginPage("Email and password are incorrect"))
+		log.Warnf("Password does not match for user: %s", reqBody.Email)
+		renderTempl(c, templates.LoginPage("Email or password are incorrect"))
 		return
 	}
 
@@ -128,7 +140,7 @@ func LoginHandler(c *gin.Context) {
 		},
 	)
 
-	jwtStr, err := token.SignedString(conf.JwtSecret)
+	jwtStr, err := token.SignedString([]byte(conf.JwtSecret))
 	if err != nil {
 		renderTempl(c, templates.LoginPage("An error occured. Please try again later"))
 	}

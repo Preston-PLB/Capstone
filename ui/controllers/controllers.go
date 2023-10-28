@@ -5,6 +5,7 @@ import (
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db"
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/middleware"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 var mongo *db.DB
@@ -18,6 +19,11 @@ func BuildRouter(r *gin.Engine) {
 	if err != nil {
 		panic(err)
 	}
+
+	log = logrus.New()
+	log.SetFormatter(&logrus.TextFormatter{
+		ForceColors:               true,
+	})
 
 	r.GET("/", middleware.AuthMiddleware(false) ,LandingPage)
 	r.GET("/login", middleware.AuthMiddleware(false), LoginPage)

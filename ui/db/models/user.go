@@ -16,7 +16,7 @@ import (
 const USER_TYPE string = "user"
 
 type User struct {
-	*model
+	CommonFields `bson:"obj_info"`
 	mongoId      primitive.ObjectID `bson:"_id,omitempty"`
 	UserId       string             `bson:"user_id,omitempty"`
 	Email        string             `bson:"email,omitempty"`
@@ -28,18 +28,16 @@ func (user *User) Save(client *mongo.Client) error {
 
 	if user.mongoId.IsZero() {
 		now := time.Now()
-		user.model = &model{
-			EntityType: USER_TYPE,
-			CreatedAt: now,
-			UpdatedAt: now,
-		}
+		user.EntityType = USER_TYPE
+		user.CreatedAt = now
+		user.UpdatedAt = now
 		user.UserId = uuid.New().String()
 		user.mongoId = primitive.NewObjectIDFromTimestamp(now)
 	}
 
 	opts := options.Update().SetUpsert(true)
 
-	res, err := client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).UpdateOne(context.Background(), user, opts)
+	res, err := client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).UpdateOne(context.Background(),  bson.M{"user_id": user.UserId}, bson.M{"$set": user},opts)
 	if err != nil {
 		return err
 	}

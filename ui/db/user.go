@@ -58,7 +58,7 @@ func (db *DB) FindAllUsers() ([]models.User, error) {
 	conf := config.Config()
 
 	opts := options.Find()
-	res, err := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).Find(context.Background(), bson.M{"ent": models.USER_TYPE}, opts)
+	res, err := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).Find(context.Background(), bson.M{"obj_info.ent": models.USER_TYPE}, opts)
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
