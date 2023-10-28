@@ -1,0 +1,14 @@
+package templates
+
+templ LoginPage() {
+	<!DOCTYPE html>
+	<html>
+		@Head()
+		<body class="text-gray-800 antialiased">
+			@Nav(false)
+			@LoginContent()
+		</body>
+		@Footer()
+		@toggleNavBar()
+	</html>
+}

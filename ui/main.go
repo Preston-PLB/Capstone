@@ -17,5 +17,13 @@ func main() {
 
 		c.Data(200, "text/html", []byte(buf.String()))
 	})
+	r.GET("/login", func(c *gin.Context) {
+		raw := []byte{}
+		buf := bytes.NewBuffer(raw)
+		templates.LoginPage().Render(c.Request.Context(), buf)
+
+
+		c.Data(200, "text/html", []byte(buf.String()))
+	})
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

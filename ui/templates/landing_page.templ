@@ -35,8 +35,9 @@ templ LandingPage(auth bool) {
 		@Head()
 		<body class="text-gray-800 antialiased">
 			@Nav(auth)
-			@Content()
+			@LandingContent()
 		</body>
+		@Footer()
 		@toggleNavBar()
 	</html>
 }
