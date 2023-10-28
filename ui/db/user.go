@@ -6,6 +6,7 @@ import (
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/config"
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -16,6 +17,9 @@ func (db *DB) FindUserByEmail(email string) (*models.User, error) {
 	res := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).FindOne(context.Background(), bson.M{"email": email}, opts)
 
 	if res.Err() != nil {
+		if res.Err() == mongo.ErrNoDocuments {
+			return nil, nil
+		}
 		return nil, res.Err()
 	}
 
@@ -35,6 +39,9 @@ func (db *DB) FindUserById(id string) (*models.User, error) {
 	res := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).FindOne(context.Background(), bson.M{"user_id": id}, opts)
 
 	if res.Err() != nil {
+		if res.Err() == mongo.ErrNoDocuments {
+			return nil, nil
+		}
 		return nil, res.Err()
 	}
 
@@ -54,6 +61,9 @@ func (db *DB) FindAllUsers() ([]models.User, error) {
 	res, err := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).Find(context.Background(), bson.M{"ent": models.USER_TYPE}, opts)
 
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, nil
+		}
 		return nil, res.Err()
 	}
 

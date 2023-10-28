@@ -1,6 +1,6 @@
 package templates
 
-templ LoginContent() {
+templ LoginContent(signup bool, errorMsg string) {
 	<main>
 		<section class="absolute w-full h-full">
 			<div
@@ -14,10 +14,27 @@ templ LoginContent() {
  							class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-300 border-0"
 						>
 							<div class="flex-auto px-4 lg:px-10 py-10 pt-10">
+								if errorMsg != "" {
+									<div role="alert">
+										<div class="bg-red-500 text-white font-bold rounded-t px-4 py-2">
+											Error
+										</div>
+										<div class="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+											<p>{ errorMsg }</p>
+										</div>
+									</div>
+								}
 								<div class="text-gray-500 text-center mb-3 font-bold">
 									<small>Sign in</small>
 								</div>
-								<form>
+								<form
+ 									if signup {
+										action="/signup"
+									} else {
+										action="/login"
+									}
+ 									method="POST"
+								>
 									<div class="relative w-full mb-3">
 										<label
  											class="block uppercase text-gray-700 text-xs font-bold mb-2"
@@ -27,6 +44,7 @@ templ LoginContent() {
  	class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
  	placeholder="Email"
  	style="transition: all 0.15s ease 0s;"
+ 	name="email"
 />
 									</div>
 									<div class="relative w-full mb-3">
@@ -38,6 +56,7 @@ templ LoginContent() {
  	class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
  	placeholder="Password"
  	style="transition: all 0.15s ease 0s;"
+ 	name="password"
 />
 									</div>
 									<div>
@@ -52,22 +71,35 @@ templ LoginContent() {
 									</div>
 									<div class="text-center mt-6">
 										<button
+ 											type="submit"
  											class="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
  											type="button"
  											style="transition: all 0.15s ease 0s;"
 										>
-											Sign In
+											if signup {
+												{ "Signup" }
+											} else {
+												{ "Login" }
+											}
 										</button>
 									</div>
 								</form>
 							</div>
-						</div>
-						<div class="flex flex-wrap mt-6">
-							<div class="w-1/2">
-								<a href="#pablo" class="text-gray-300"><small>Forgot password?</small></a>
-							</div>
-							<div class="w-1/2 text-right">
-								<a href="#pablo" class="text-gray-300"><small>Create new account</small></a>
+							<div class="flex flex-wrap mt-2 py-5">
+								if !signup {
+									<div class="w-1/2 text-center">
+										<a href="#pablo" class="text-gray-800"><small>Forgot password?</small></a>
+									</div>
+								}
+								if signup {
+									<div class="w-full text-center">
+										<a href="/login" class="text-gray-800"><small>Log in instead</small></a>
+									</div>
+								} else {
+									<div class="w-1/2 text-center">
+										<a href="/signup" class="text-gray-800"><small>Create an account</small></a>
+									</div>
+								}
 							</div>
 						</div>
 					</div>

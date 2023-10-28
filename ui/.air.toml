@@ -5,9 +5,9 @@ tmp_dir = "tmp"
 [build]
   args_bin = []
   bin = "./tmp/main"
-  cmd = "rm **/*_templ.go && templ generate && go build -o ./tmp/main ."
+  cmd = "rm **/*_templ.go; templ generate --path ./templates && go build -o ./tmp/main ."
   delay = 1000
-  exclude_dir = ["assets", "tmp", "vendor", "testdata", "dist"]
+  exclude_dir = ["assets", "tmp", "vendor", "testdata", "dist", "docker"]
   exclude_file = []
   exclude_regex = ["_test.go", "_templ.go"]
   exclude_unchanged = false

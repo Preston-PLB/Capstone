@@ -1,12 +1,25 @@
 package templates
 
-templ LoginPage() {
+templ LoginPage(errorMsg string) {
 	<!DOCTYPE html>
 	<html>
 		@Head()
 		<body class="text-gray-800 antialiased">
 			@Nav(false)
-			@LoginContent()
+			@LoginContent(false, errorMsg)
+		</body>
+		@Footer()
+		@toggleNavBar()
+	</html>
+}
+
+templ SignupPage(errorMsg string) {
+	<!DOCTYPE html>
+	<html>
+		@Head()
+		<body class="text-gray-800 antialiased">
+			@Nav(false)
+			@LoginContent(true, errorMsg)
 		</body>
 		@Footer()
 		@toggleNavBar()

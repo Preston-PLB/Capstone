@@ -1,3 +1,4 @@
 dist/*
 tmp/*
 **/*_templ.go
+docker/tmp/*

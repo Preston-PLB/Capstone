@@ -24,3 +24,7 @@ func NewClient(uri string) (*DB, error) {
 
 	return &DB{client: client}, nil
 }
+
+func (db *DB) SaveModel(m Model) error {
+	return m.Save(db.client)
+}

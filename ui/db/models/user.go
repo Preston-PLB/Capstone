@@ -28,9 +28,11 @@ func (user *User) Save(client *mongo.Client) error {
 
 	if user.mongoId.IsZero() {
 		now := time.Now()
-		user.EntityType = USER_TYPE
-		user.CreatedAt = now
-		user.UpdatedAt = now
+		user.model = &model{
+			EntityType: USER_TYPE,
+			CreatedAt: now,
+			UpdatedAt: now,
+		}
 		user.UserId = uuid.New().String()
 		user.mongoId = primitive.NewObjectIDFromTimestamp(now)
 	}
