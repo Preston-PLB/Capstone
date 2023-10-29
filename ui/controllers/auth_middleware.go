@@ -71,15 +71,23 @@ func AuthMiddleware(strict bool) gin.HandlerFunc {
 			return []byte(conf.JwtSecret), nil
 		})
 		if err != nil {
-			if err == jwt.ErrSignatureInvalid {
-				log.Warn("Redirecting, jwt invalid")
+			if err == jwt.ErrTokenExpired{
+				log.Warn("Redirecting, jwt expired")
 				c.Redirect(301, "/login")
 				return
+			}else{
+				if strict {
+					log.Warnf("Redirecting, jwt issue: %s", err)
+					c.Redirect(301, "/login")
+					return
+				} else {
+					log.Warnf("Jwt is invalid, but auth is not strict. Reason: %s", err)
+					return
+				}
 			}
-			log.WithError(err).Error("Unable to get cookie from browser")
-			c.AbortWithError(504, err)
-			return
 		}
+
+
 		if !parsedToken.Valid  {
 			if strict {
 				log.Warn("Redirecting, jwt invalid")
