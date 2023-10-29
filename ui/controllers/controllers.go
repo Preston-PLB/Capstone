@@ -24,7 +24,7 @@ func BuildRouter(r *gin.Engine) {
 		ForceColors:               true,
 	})
 
-	r.GET("/", LandingPage)
+	r.GET("/", AuthMiddleware(false), LandingPage)
 	r.GET("/login", AuthMiddleware(false), LoginPage)
 	r.GET("/signup",AuthMiddleware(false), SignUpPage)
 

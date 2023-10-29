@@ -9,6 +9,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+const USER_OBJ_KEY = "userObj"
+
 type AuthClaims struct {
 	Subject   string `json:"sub"`
 	Expires   int64  `json:"exp"`
@@ -110,6 +112,7 @@ func AuthMiddleware(strict bool) gin.HandlerFunc {
 			c.AbortWithError(504, nil)
 		}
 
-		c.Set("UserObj", user)
+		//store user object reference in session.
+		c.Set(USER_OBJ_KEY, user)
 	}
 }

@@ -1,5 +1,7 @@
 package templates
 
+import "git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db/models"
+
 //Head for scripts and such
 
 templ Head() {
@@ -29,12 +31,12 @@ templ Head() {
 	</head>
 }
 
-templ LandingPage(auth bool) {
+templ LandingPage(user *models.User) {
 	<!DOCTYPE html>
 	<html>
 		@Head()
 		<body class="text-gray-800 antialiased">
-			@Nav(auth)
+			@Nav(user)
 			@LandingContent()
 		</body>
 		@Footer()
