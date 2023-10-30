@@ -3,7 +3,7 @@ package templates
 templ LoginPage(errorMsg string) {
 	<!DOCTYPE html>
 	<html>
-		@Head()
+		@Head("Log in")
 		<body class="text-gray-800 antialiased">
 			@Nav(nil)
 			@LoginContent(false, errorMsg)
@@ -16,7 +16,7 @@ templ LoginPage(errorMsg string) {
 templ SignupPage(errorMsg string) {
 	<!DOCTYPE html>
 	<html>
-		@Head()
+		@Head("Sign up")
 		<body class="text-gray-800 antialiased">
 			@Nav(nil)
 			@LoginContent(true, errorMsg)

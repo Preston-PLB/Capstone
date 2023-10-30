@@ -4,7 +4,7 @@ import "git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db/models"
 
 //Head for scripts and such
 
-templ Head() {
+templ Head(msg string) {
 	<head>
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -27,14 +27,14 @@ templ Head() {
  			rel="stylesheet"
  			href="https://cdn.jsdelivr.net/gh/creativetimofficial/tailwind-starter-kit/compiled-tailwind.min.css"
 		/>
-		<title>Dashboard | Capstone - Pbaxt10</title>
+		<title>{ msg } | Capstone - Pbaxt10</title>
 	</head>
 }
 
 templ LandingPage(user *models.User) {
 	<!DOCTYPE html>
 	<html>
-		@Head()
+		@Head("Welcome")
 		<body class="text-gray-800 antialiased">
 			@Nav(user)
 			@LandingContent()

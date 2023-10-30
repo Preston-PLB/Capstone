@@ -25,5 +25,11 @@ func SignUpPage(c *gin.Context) {
 }
 
 func DashboardPage(c *gin.Context) {
-	c.JSON(200, gin.H{"response": "dashboard"})
+	if raw, exists := c.Get(USER_OBJ_KEY); exists {
+		if user, ok := raw.(*models.User); ok {
+			renderTempl(c, templates.DashboardPage(user))
+			return
+		}
+	}
+	renderTempl(c, templates.DashboardPage(nil))
 }
