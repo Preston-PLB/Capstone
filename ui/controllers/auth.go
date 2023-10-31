@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"regexp"
 	"time"
 
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/config"
@@ -11,6 +12,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
+
+var VALIDATE_EMAIL_REGEX = regexp.MustCompile(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`)
 
 type LoginPostBody struct {
 	Email string `json:"email"`
@@ -38,6 +41,12 @@ func SignUpHandler (c *gin.Context) {
 	}
 
 	//Verify username and password
+	if ok := VALIDATE_EMAIL_REGEX.Match([]byte(reqBody.Email)); !ok {
+		log.Warnf("User provided email field is not valid: %s", reqBody.Email)
+		renderTempl(c, templates.SignupPage("You eamil is invalid. Please try again"))
+		return
+	}
+
 	user, err := mongo.FindUserByEmail(reqBody.Email)
 	if err != nil {
 		log.WithError(err).Errorf("Failed to lookup user: %s", reqBody.Email)
@@ -119,6 +128,12 @@ func LoginHandler(c *gin.Context) {
 	}
 
 	//Verify username and password
+	if ok := VALIDATE_EMAIL_REGEX.Match([]byte(reqBody.Email)); !ok {
+		log.Warnf("User provided email field is not valid: %s", reqBody.Email)
+		renderTempl(c, templates.SignupPage("You eamil is invalid. Please try again"))
+		return
+	}
+
 	user, err := mongo.FindUserByEmail(reqBody.Email)
 	if err != nil {
 		log.WithError(err).Errorf("Failed to lookup user: %s", reqBody.Email)
