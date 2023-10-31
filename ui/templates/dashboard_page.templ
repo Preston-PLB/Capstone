@@ -123,7 +123,7 @@ templ DashboardContentNav(user *models.User) {
 			<a
  				class="text-white text-sm uppercase hidden lg:inline-block font-semibold"
  				href="./index.html"
-			>{ user.Email }</a>
+			>Capstone</a>
 			<form
  				class="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3"
 			>
@@ -266,6 +266,9 @@ templ DashboardTableWidget(title string, table map[string][]string) {
 			</div>
 		</div>
 	</div>
+}
+
+templ DashboardVendorWidget(list string) {
 }
 
 templ DashboardContent(user *models.User) {
