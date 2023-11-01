@@ -60,6 +60,7 @@ func SignUpHandler (c *gin.Context) {
 		return
 	}
 
+	//create new user
 	user = &models.User{}
 
 	passHash, err := bcrypt.GenerateFromPassword([]byte(reqBody.Password), 10)
@@ -78,6 +79,10 @@ func SignUpHandler (c *gin.Context) {
 		renderTempl(c, templates.SignupPage("Signup failed. Please try again later"))
 		return
 	}
+
+	//add vendor accounts
+
+	mongo.AddAccountsForUser(user)
 
 	now := time.Now().Unix()
 	exp := time.Now().Add(12 * time.Hour).Unix()

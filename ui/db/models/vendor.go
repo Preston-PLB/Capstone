@@ -14,9 +14,11 @@ type Vendor struct {
 }
 
 type VendorAccount struct {
-	CommonFields `bson:"obj_info"`
-	mongoId      primitive.ObjectID `bson:"_id,omitempty"`
-	UserId       string             `bson:"user_id,omitempty"`
-	Secret       string             `bson:"secret,omitempty"`
-	VendorId     string             `bson:"vendor_id,omitempty"`
+	CommonFields  `bson:"obj_info"`
+	*Vendor
+	mongoId       primitive.ObjectID `bson:"_id,omitempty"`
+	UserId        string             `bson:"user_id,omitempty"`
+	Secret        string             `bson:"secret,omitempty"`
+	VendorId      string             `bson:"vendor_id,omitempty"`
+	Authenticated bool               `bson:"authenticated,omitempty"`
 }
