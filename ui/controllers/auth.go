@@ -85,7 +85,7 @@ func SignUpHandler(c *gin.Context) {
 	//build jwt
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		AuthClaims{
-			Subject:   user.MongoId().String(),
+			Subject:   user.MongoId().Hex(),
 			Expires:   exp,
 			IssuedAt:  now,
 			NotBefore: now,
@@ -159,7 +159,7 @@ func LoginHandler(c *gin.Context) {
 	//build jwt
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		AuthClaims{
-			Subject:   user.MongoId().String(),
+			Subject:   user.MongoId().Hex(),
 			Expires:   exp,
 			IssuedAt:  now,
 			NotBefore: now,

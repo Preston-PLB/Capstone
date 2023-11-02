@@ -25,12 +25,19 @@ func SignUpPage(c *gin.Context) {
 }
 
 func DashboardPage(c *gin.Context) {
-	//Get vendors
 	if raw, exists := c.Get(USER_OBJ_KEY); exists {
 		if user, ok := raw.(*models.User); ok {
-			renderTempl(c, templates.DashboardPage(user))
+			//get vendors
+			vendors, err := mongo.FindVendorAccountByUser(user.MongoId())
+			if err != nil {
+				log.WithError(err).Error("Failed to get vendors for user: %s", user.Email)
+				c.AbortWithStatus(502)
+			}
+
+			renderTempl(c, templates.DashboardPage(user, vendors))
 			return
+		} else {
+			c.AbortWithStatus(502)
 		}
 	}
-	renderTempl(c, templates.DashboardPage(nil))
 }

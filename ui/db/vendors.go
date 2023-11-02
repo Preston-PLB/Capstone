@@ -6,10 +6,11 @@ import (
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/config"
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (db *DB) FindVendorAccountByUser(userId string) ([]models.VendorAccount, error) {
+func (db *DB) FindVendorAccountByUser(userId primitive.ObjectID) ([]models.VendorAccount, error) {
 	conf := config.Config()
 
 	opts := options.Find()
@@ -19,7 +20,7 @@ func (db *DB) FindVendorAccountByUser(userId string) ([]models.VendorAccount, er
 	}
 
 	vendors := []models.VendorAccount{}
-	err = res.All(context.Background(), vendors)
+	err = res.All(context.Background(), &vendors)
 	if err != nil {
 		return nil, err
 	}

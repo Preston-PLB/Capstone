@@ -8,6 +8,11 @@ import (
 
 const VENDOR_ACCOUNT_TYPE = "vendor_account"
 
+const (
+	YOUTUBE_VENDOR_NAME = "YouTube"
+	PCO_VENDOR_NAME     = "PCO"
+)
+
 type OauthCredential struct {
 	AccessToken  string    `bson:"access_token,omitempty" json:"access_token,omitempty"`
 	ExpiresIn    int       `bson:"expires_in,omitempty" json:"expires_in,omitempty"`
@@ -22,8 +27,8 @@ type VendorAccount struct {
 	mongoId          primitive.ObjectID `bson:"_id,omitempty"`
 	UserId           primitive.ObjectID `bson:"user_id,omitempty"`
 	Secret           string             `bson:"secret,omitempty"`
-	VendorId         string             `bson:"vendor_id,omitempty"`
 	OauthCredentials *OauthCredential   `bson:"ouath_credentials,omitempty"`
+	Name             string             `bson:"name"`
 }
 
 func (va *VendorAccount) MongoId() primitive.ObjectID {

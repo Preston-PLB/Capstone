@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/config"
-	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -33,6 +32,7 @@ func NewClient(uri string) (*DB, error) {
 func (db *DB) SaveModel(m Model) error {
 	conf := config.Config()
 
+	m.UpdateObjectInfo()
 	opts := options.Update().SetUpsert(true)
 	res, err := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).UpdateOne(context.Background(), bson.M{"_id": m.MongoId()}, bson.M{"$set": m}, opts)
 	if err != nil {

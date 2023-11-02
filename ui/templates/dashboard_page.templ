@@ -2,6 +2,7 @@ package templates
 
 import (
 	"fmt"
+	"time"
 
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db/models"
 )
@@ -303,19 +304,27 @@ templ DashboardVendorWidget(vendors []models.VendorAccount) {
 						</tr>
 					</thead>
 					<tbody>
-						for _, vendor := range vendors {
+						if len(vendors) == 0 {
 							<tr>
 								<th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
-									{ vendor.Name }
-								</th>
-								<th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
-									if vendor.Authenticated {
-										Active
-									} else {
-										<button>Log in</button>
-									}
+									No accounts are available. Click + to add one
 								</th>
 							</tr>
+						} else {
+							for _, vendor := range vendors {
+								<tr>
+									<th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
+										{ vendor.Name }
+									</th>
+									<th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
+										if vendor.OauthCredentials != nil && vendor.OauthCredentials.AccessToken != "" && vendor.OauthCredentials.ExpiresAt.Before(time.Now()) {
+											Active
+										} else {
+											<button>Log in</button>
+										}
+									</th>
+								</tr>
+							}
 						}
 					</tbody>
 				</table>
