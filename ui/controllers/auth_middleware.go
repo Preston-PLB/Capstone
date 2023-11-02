@@ -73,11 +73,11 @@ func AuthMiddleware(strict bool) gin.HandlerFunc {
 			return []byte(conf.JwtSecret), nil
 		})
 		if err != nil {
-			if err == jwt.ErrTokenExpired{
+			if err == jwt.ErrTokenExpired {
 				log.Warn("Redirecting, jwt expired")
 				c.Redirect(301, "/login")
 				return
-			}else{
+			} else {
 				if strict {
 					log.Warnf("Redirecting, jwt issue: %s", err)
 					c.Redirect(301, "/login")
@@ -89,8 +89,7 @@ func AuthMiddleware(strict bool) gin.HandlerFunc {
 			}
 		}
 
-
-		if !parsedToken.Valid  {
+		if !parsedToken.Valid {
 			if strict {
 				log.Warn("Redirecting, jwt invalid")
 				c.Redirect(301, "/login")

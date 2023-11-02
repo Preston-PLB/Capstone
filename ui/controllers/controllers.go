@@ -21,12 +21,12 @@ func BuildRouter(r *gin.Engine) {
 
 	log = logrus.New()
 	log.SetFormatter(&logrus.TextFormatter{
-		ForceColors:               true,
+		ForceColors: true,
 	})
 
 	r.GET("/", AuthMiddleware(false), LandingPage)
 	r.GET("/login", AuthMiddleware(false), LoginPage)
-	r.GET("/signup",AuthMiddleware(false), SignUpPage)
+	r.GET("/signup", AuthMiddleware(false), SignUpPage)
 
 	r.POST("/login", LoginHandler)
 	r.POST("/signup", SignUpHandler)
@@ -36,7 +36,3 @@ func BuildRouter(r *gin.Engine) {
 	dashboard.Use(AuthMiddleware(true))
 	dashboard.GET("/", DashboardPage)
 }
-
-
-
-

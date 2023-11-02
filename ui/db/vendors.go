@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (db *DB) FindVendorAccountByUser(userId string) ([]models.VendorAccount, error){
+func (db *DB) FindVendorAccountByUser(userId string) ([]models.VendorAccount, error) {
 	conf := config.Config()
 
 	opts := options.Find()
@@ -26,4 +26,3 @@ func (db *DB) FindVendorAccountByUser(userId string) ([]models.VendorAccount, er
 
 	return vendors, nil
 }
-

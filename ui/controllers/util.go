@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//Responds with 200ok and the rendered template
+// Responds with 200ok and the rendered template
 func renderTempl(c *gin.Context, tmpl templ.Component) {
 	buf := bytes.NewBuffer([]byte{})
 	tmpl.Render(c.Request.Context(), buf)
@@ -18,7 +18,6 @@ func renderTempl(c *gin.Context, tmpl templ.Component) {
 func badRequest(c *gin.Context, reason string) {
 	c.JSON(400, map[string]string{"error": reason})
 }
-
 
 func serverError(c *gin.Context, reason string) {
 	c.JSON(504, map[string]string{"error": reason})

@@ -36,7 +36,7 @@ func (db *DB) FindUserById(id string) (*models.User, error) {
 	conf := config.Config()
 
 	opts := options.FindOne()
-	res := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).FindOne(context.Background(), bson.M{"user_id": id, "obj_info.ent": models.USER_TYPE}, opts)
+	res := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).FindOne(context.Background(), bson.M{"_id": id, "obj_info.ent": models.USER_TYPE}, opts)
 
 	if res.Err() != nil {
 		if res.Err() == mongo.ErrNoDocuments {

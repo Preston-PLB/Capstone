@@ -16,11 +16,11 @@ import (
 var VALIDATE_EMAIL_REGEX = regexp.MustCompile(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`)
 
 type LoginPostBody struct {
-	Email string `json:"email"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-func SignUpHandler (c *gin.Context) {
+func SignUpHandler(c *gin.Context) {
 	//get uname and password.
 	conf := config.Config()
 	reqBody := &LoginPostBody{}
@@ -80,16 +80,12 @@ func SignUpHandler (c *gin.Context) {
 		return
 	}
 
-	//add vendor accounts
-
-	mongo.AddAccountsForUser(user)
-
 	now := time.Now().Unix()
 	exp := time.Now().Add(12 * time.Hour).Unix()
 	//build jwt
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		AuthClaims{
-			Subject:   user.UserId,
+			Subject:   user.MongoId().String(),
 			Expires:   exp,
 			IssuedAt:  now,
 			NotBefore: now,
@@ -107,7 +103,7 @@ func SignUpHandler (c *gin.Context) {
 
 	//store jwt as cookie
 	//TODO: Make sure set secure for prd deployment
-	c.SetCookie("authorization", jwtStr, 3600 * 24, "", "", false, true)
+	c.SetCookie("authorization", jwtStr, 3600*24, "", "", false, true)
 
 	c.Redirect(302, "/dashboard")
 }
@@ -163,7 +159,7 @@ func LoginHandler(c *gin.Context) {
 	//build jwt
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		AuthClaims{
-			Subject:   user.UserId,
+			Subject:   user.MongoId().String(),
 			Expires:   exp,
 			IssuedAt:  now,
 			NotBefore: now,
@@ -184,7 +180,7 @@ func LoginHandler(c *gin.Context) {
 	} else {
 		secure = true
 	}
-	c.SetCookie("authorization", jwtStr, 3600 * 24, "", "", secure, true)
+	c.SetCookie("authorization", jwtStr, 3600*24, "", "", secure, true)
 
 	c.Redirect(302, "/dashboard")
 }
@@ -198,7 +194,7 @@ func LogoutHandler(c *gin.Context) {
 	} else {
 		secure = true
 	}
-	c.SetCookie("authorization", "", 3600 * 24, "", "", secure, true)
+	c.SetCookie("authorization", "", 3600*24, "", "", secure, true)
 
 	c.Redirect(302, "/login")
 }

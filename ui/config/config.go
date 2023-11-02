@@ -19,8 +19,8 @@ type MongoConfig struct {
 var cfg *config
 
 func Init() {
-	viper.SetConfigName("config")         // name of config file (without extension)
-	viper.SetConfigType("yaml")           // REQUIRED if the config file does not have the extension in the name
+	viper.SetConfigName("config")        // name of config file (without extension)
+	viper.SetConfigType("yaml")          // REQUIRED if the config file does not have the extension in the name
 	viper.AddConfigPath("/etc/capstone") // path to look for the config file in
 
 	err := viper.ReadInConfig()
