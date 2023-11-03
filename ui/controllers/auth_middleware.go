@@ -103,12 +103,12 @@ func AuthMiddleware(strict bool) gin.HandlerFunc {
 		user, err := mongo.FindUserById(claims.Subject)
 		if err != nil {
 			log.WithError(err).Errorf("Unable to get user: %s from DB", claims.Subject)
-			c.AbortWithError(504, err)
+			c.AbortWithError(502, err)
 		}
 
 		if user == nil {
 			log.Errorf("Unable to find user: %s in DB", claims.Subject)
-			c.AbortWithError(504, nil)
+			c.AbortWithError(502, nil)
 		}
 
 		//store user object reference in session.

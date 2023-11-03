@@ -19,6 +19,7 @@ templ DashboardPage(user *models.User, vendorAccounts []models.VendorAccount) {
 			</div>
 		</body>
 		@DashboardScript()
+		@toggleDropdown()
 	</html>
 }
 
@@ -269,6 +270,68 @@ templ DashboardTableWidget(title string, table map[string][]string) {
 	</div>
 }
 
+templ DashboardVendorDropDown() {
+	<div
+ 		class="lg:flex flex-grow items-center bg-white lg:bg-transparent lg:shadow-none hidden"
+ 		id="dashboard-drop-down"
+	>
+		<ul class="flex flex-col lg:flex-row list-none mr-auto">
+			<li class="flex items-center">
+				<a
+ 					class="lg:text-white lg:hover:text-gray-300 text-gray-800 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
+ 					href="https://www.creative-tim.com/learning-lab/tailwind-starter-kit#/landing"
+				>
+					<i
+ 						class="lg:text-gray-300 text-gray-500 far fa-file-alt text-lg leading-lg mr-2"
+					></i>
+					Docs
+				</a>
+			</li>
+		</ul>
+		<ul class="flex flex-col lg:flex-row list-none lg:ml-auto">
+			<li class="flex items-center">
+				<a
+ 					class="lg:text-white lg:hover:text-gray-300 text-gray-800 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
+ 					href="#pablo"
+				>
+					<i
+ 						class="lg:text-gray-300 text-gray-500 fab fa-facebook text-lg leading-lg "
+					></i><span class="lg:hidden inline-block ml-2">Share</span>
+				</a>
+			</li>
+			<li class="flex items-center">
+				<a
+ 					class="lg:text-white lg:hover:text-gray-300 text-gray-800 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
+ 					href="#pablo"
+				>
+					<i
+ 						class="lg:text-gray-300 text-gray-500 fab fa-twitter text-lg leading-lg "
+					></i><span class="lg:hidden inline-block ml-2">Tweet</span>
+				</a>
+			</li>
+			<li class="flex items-center">
+				<a
+ 					class="lg:text-white lg:hover:text-gray-300 text-gray-800 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
+ 					href="#pablo"
+				>
+					<i
+ 						class="lg:text-gray-300 text-gray-500 fab fa-github text-lg leading-lg "
+					></i><span class="lg:hidden inline-block ml-2">Star</span>
+				</a>
+			</li>
+			<li class="flex items-center">
+				<button
+ 					class="bg-white text-gray-800 active:bg-gray-100 text-xs font-bold uppercase px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none lg:mr-1 lg:mb-0 ml-3 mb-3"
+ 					type="button"
+ 					style="transition: all 0.15s ease 0s;"
+				>
+					<i class="fas fa-arrow-alt-circle-down"></i> Download
+				</button>
+			</li>
+		</ul>
+	</div>
+}
+
 templ DashboardVendorWidget(vendors []models.VendorAccount) {
 	<div class="w-full xl:w-8/12 mb-12 xl:mb-0 px-4">
 		<div class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded">
@@ -284,9 +347,11 @@ templ DashboardVendorWidget(vendors []models.VendorAccount) {
  							class="bg-indigo-500 text-white active:bg-indigo-600 text-md font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1"
  							type="button"
  							style="transition:all .15s ease"
+ 							onClick="toggleDropdown(&#39;dashboard-drop-down&#39;)"
 						>
 							+
 						</button>
+						@DashboardVendorDropDown()
 					</div>
 				</div>
 			</div>
