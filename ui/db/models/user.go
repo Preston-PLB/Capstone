@@ -10,19 +10,20 @@ const USER_TYPE string = "user"
 
 type User struct {
 	*CommonFields `bson:"obj_info"`
-	mongoId       primitive.ObjectID `bson:"_id,omitempty"`
+	Id       primitive.ObjectID `bson:"_id"`
 	Email         string             `bson:"email,omitempty"`
 	PassowrdHash  string             `bson:"password_hash,omitempty"`
 }
 
 func (user *User) MongoId() primitive.ObjectID {
 
-	if user.mongoId.IsZero() {
+	if user.Id.IsZero() {
 		now := time.Now()
-		user.mongoId = primitive.NewObjectIDFromTimestamp(now)
+
+		user.Id = primitive.NewObjectIDFromTimestamp(now)
 	}
 
-	return user.mongoId
+	return user.Id
 }
 
 func (user *User) UpdateObjectInfo() {

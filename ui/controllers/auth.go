@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"regexp"
 	"time"
@@ -12,6 +13,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
+
+const AUTH_COOKIE_NAME = "authorization"
 
 var VALIDATE_EMAIL_REGEX = regexp.MustCompile(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`)
 
@@ -103,7 +106,7 @@ func SignUpHandler(c *gin.Context) {
 
 	//store jwt as cookie
 	//TODO: Make sure set secure for prd deployment
-	c.SetCookie("authorization", jwtStr, 3600*24, "", "", false, true)
+	c.SetCookie(AUTH_COOKIE_NAME, jwtStr, 3600*24, "", "", false, true)
 
 	c.Redirect(302, "/dashboard")
 }
@@ -141,6 +144,7 @@ func LoginHandler(c *gin.Context) {
 		renderTempl(c, templates.LoginPage(err.Error()))
 		return
 	}
+
 
 	if user == nil {
 		log.Warnf("No user was found for: %s", reqBody.Email)
@@ -180,7 +184,7 @@ func LoginHandler(c *gin.Context) {
 	} else {
 		secure = true
 	}
-	c.SetCookie("authorization", jwtStr, 3600*24, "", "", secure, true)
+	c.SetCookie(AUTH_COOKIE_NAME, jwtStr, 3600*24, "", "", secure, true)
 
 	c.Redirect(302, "/dashboard")
 }
@@ -197,4 +201,16 @@ func LogoutHandler(c *gin.Context) {
 	c.SetCookie("authorization", "", 3600*24, "", "", secure, true)
 
 	c.Redirect(302, "/login")
+}
+
+func getAuthHash(c *gin.Context) string {
+	jwtToken, err := c.Cookie(AUTH_COOKIE_NAME)
+	if err != nil {
+		return ""
+	}
+
+	h := sha256.New()
+	h.Write([]byte(jwtToken))
+
+	return string(h.Sum(nil))
 }

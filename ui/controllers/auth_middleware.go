@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/config"
+	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -114,4 +115,14 @@ func AuthMiddleware(strict bool) gin.HandlerFunc {
 		//store user object reference in session.
 		c.Set(USER_OBJ_KEY, user)
 	}
+}
+
+func getUserFromContext(c *gin.Context) *models.User {
+	if raw, exists := c.Get(USER_OBJ_KEY); exists {
+		if user, ok := raw.(*models.User); ok {
+			return user
+		}
+	}
+
+	return nil
 }

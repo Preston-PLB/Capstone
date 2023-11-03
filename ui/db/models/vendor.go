@@ -24,7 +24,7 @@ type OauthCredential struct {
 
 type VendorAccount struct {
 	*CommonFields    `bson:"obj_info"`
-	mongoId          primitive.ObjectID `bson:"_id,omitempty"`
+	Id          primitive.ObjectID `bson:"_id,omitempty"`
 	UserId           primitive.ObjectID `bson:"user_id,omitempty"`
 	Secret           string             `bson:"secret,omitempty"`
 	OauthCredentials *OauthCredential   `bson:"ouath_credentials,omitempty"`
@@ -32,12 +32,12 @@ type VendorAccount struct {
 }
 
 func (va *VendorAccount) MongoId() primitive.ObjectID {
-	if va.mongoId.IsZero() {
+	if va.Id.IsZero() {
 		now := time.Now()
-		va.mongoId = primitive.NewObjectIDFromTimestamp(now)
+		va.Id = primitive.NewObjectIDFromTimestamp(now)
 	}
 
-	return va.mongoId
+	return va.Id
 }
 
 func (va *VendorAccount) UpdateObjectInfo() {
