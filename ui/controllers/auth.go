@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"regexp"
 	"time"
@@ -212,5 +213,5 @@ func getAuthHash(c *gin.Context) string {
 	h := sha256.New()
 	h.Write([]byte(jwtToken))
 
-	return string(h.Sum(nil))
+	return hex.EncodeToString(h.Sum(nil))
 }

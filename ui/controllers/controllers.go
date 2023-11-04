@@ -46,7 +46,7 @@ func BuildRouter(r *gin.Engine) {
 
 	youtube := vendor.Group("/youtube")
 	youtube.POST("/initiate", InitiateYoutubeOuath)
-	youtube.POST("/callback", ReceiveYoutubeOauth)
+	youtube.GET("/callback", ReceiveYoutubeOauth)
 
 	pco := vendor.Group("/pco")
 	pco.POST("/initiate", InitiatePCOOuath)

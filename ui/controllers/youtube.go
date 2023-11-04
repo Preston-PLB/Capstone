@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"bytes"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -14,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const REDIRECT_URI = "http://localhost:8080/vendor/youtube/callback"
+const REDIRECT_URI = "https://capstone.preston-baxter.com:8080/vendor/youtube/callback"
 
 func InitiateYoutubeOuath(c *gin.Context) {
 	conf := config.Config()
@@ -78,26 +77,38 @@ func ReceiveYoutubeOauth(c *gin.Context) {
 	q.Add("code", code)
 	q.Add("client_id", conf.YoutubeConfig.ClientId)
 	q.Add("client_secret", conf.YoutubeConfig.ClientSecret)
-	q.Add("redirect_uri", "http://localhost:8080")
+	q.Add("redirect_uri", "https://capstone.preston-baxter.com:8080/dashboard")
 	q.Add("grant_type", "authorization_code")
 
 	req, err := http.NewRequest("POST", token_url.String(), strings.NewReader(q.Encode()))
 	if err != nil {
 		log.WithError(err).Errorf("Failed to generate request with the following url: '%s'", token_url.String())
 		c.AbortWithStatus(502)
+		return
 	}
+
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := client.Do(req)
 	if err != nil {
 		log.WithError(err).Errorf("Failed to make request to the following url: '%s'", token_url.String())
 		c.AbortWithStatus(502)
+		return
 	}
 
 	rawBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.WithError(err).Errorf("Failed to read body from the following url: '%s'", token_url.String())
 		c.AbortWithStatus(502)
+		return
 	}
+
+	if resp.StatusCode != 200 {
+		log.Errorf("Response failed with status code: %d. Error: %s", resp.StatusCode ,string(rawBody))
+		c.AbortWithStatus(502)
+		return
+	}
+
 
 	oauthResp := &models.OauthCredential{}
 	err = json.Unmarshal(rawBody, oauthResp)
@@ -105,6 +116,7 @@ func ReceiveYoutubeOauth(c *gin.Context) {
 		log.WithError(err).Errorf("Failed to Unmarshal response from the following url: '%s'", token_url.String())
 		c.AbortWithStatus(502)
 	}
+	log.Infof("oauthResp: %v", *oauthResp)
 	//Set expires at time but shave some time off to refresh token before expire date
 	oauthResp.ExpiresAt = time.Now().Add(time.Duration(oauthResp.ExpiresIn)*time.Second - 10)
 
@@ -119,6 +131,7 @@ func ReceiveYoutubeOauth(c *gin.Context) {
 	if err != nil {
 		log.WithError(err).Errorf("Failed to save credentials for user: %s", user.Email)
 		c.AbortWithStatus(502)
+		return
 	}
 
 	c.Redirect(302, "/dashboard")
