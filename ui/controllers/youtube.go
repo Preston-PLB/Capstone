@@ -118,7 +118,6 @@ func ReceiveYoutubeOauth(c *gin.Context) {
 		log.WithError(err).Errorf("Failed to Unmarshal response from the following url: '%s'", token_url.String())
 		c.AbortWithStatus(502)
 	}
-	log.Infof("oauthResp: %v", *oauthResp)
 	//Set expires at time but shave some time off to refresh token before expire date
 	oauthResp.ExpiresAt = time.Now().Add(time.Duration(oauthResp.ExpiresIn)*time.Second - 10)
 

@@ -1,11 +1,9 @@
 package models
 
 import (
-	"net/http"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 const VENDOR_ACCOUNT_TYPE = "vendor_account"
@@ -44,8 +42,3 @@ func (va *VendorAccount) UpdateObjectInfo() {
 	va.UpdatedAt = now
 }
 
-func (va *VendorAccount) MakeRequest(req *http.Request, db *mongo.Client) error {
-	if va.OauthCredentials.ExpiresAt.Before(time.Now()) {
-		va.OauthCredentials.RefreshAccessToken(va.Name)
-	}
-}
