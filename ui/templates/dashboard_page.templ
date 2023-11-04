@@ -2,7 +2,6 @@ package templates
 
 import (
 	"fmt"
-	"time"
 
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db/models"
 )
@@ -227,9 +226,11 @@ templ DashboardVendorDropDown() {
 							Youtube
 						</button>
 					</form>
-					<a hx-post="/vendor/pco/initiate" href="" class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700">
-						PCO
-					</a>
+					<form action="/vendor/pco/initiate" method="POST">
+						<button type="submit" class="text-sm align-left py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700">
+							Planning Center
+						</button>
+					</form>
 				</div>
 			</div>
 		</div>
@@ -278,7 +279,7 @@ templ DashboardVendorWidget(vendors []models.VendorAccount) {
 										{ vendor.Name }
 									</th>
 									<th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
-										if vendor.OauthCredentials != nil && vendor.OauthCredentials.AccessToken != "" && vendor.OauthCredentials.ExpiresAt.Before(time.Now()) {
+										if vendor.OauthCredentials != nil && vendor.OauthCredentials.AccessToken != "" {
 											Active
 										} else {
 											<button>Log in</button>

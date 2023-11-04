@@ -50,4 +50,5 @@ func BuildRouter(r *gin.Engine) {
 
 	pco := vendor.Group("/pco")
 	pco.POST("/initiate", InitiatePCOOuath)
+	pco.GET("/callback", RecievePCOOuath)
 }

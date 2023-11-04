@@ -1,9 +1,11 @@
 package models
 
 import (
+	"net/http"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 const VENDOR_ACCOUNT_TYPE = "vendor_account"
@@ -13,14 +15,6 @@ const (
 	PCO_VENDOR_NAME     = "PCO"
 )
 
-type OauthCredential struct {
-	AccessToken  string    `bson:"access_token,omitempty" json:"access_token,omitempty"`
-	ExpiresIn    int       `bson:"expires_in,omitempty" json:"expires_in,omitempty"`
-	ExpiresAt    time.Time `bson:"expires_at,omitempty" json:"expires_at,omitempty"`
-	TokenType    string    `bson:"token_type,omitempty" json:"token_type,omitempty"`
-	Scope        string    `bson:"scope,omitempty" json:"scope,omitempty"`
-	RefreshToken string    `bson:"refresh_token,omitempty" json:"refresh_token,omitempty"`
-}
 
 type VendorAccount struct {
 	*CommonFields    `bson:"obj_info"`
@@ -48,4 +42,10 @@ func (va *VendorAccount) UpdateObjectInfo() {
 		va.CreatedAt = now
 	}
 	va.UpdatedAt = now
+}
+
+func (va *VendorAccount) MakeRequest(req *http.Request, db *mongo.Client) error {
+	if va.OauthCredentials.ExpiresAt.Before(time.Now()) {
+		va.OauthCredentials.RefreshAccessToken(va.Name)
+	}
 }

@@ -8,11 +8,10 @@ import (
 )
 
 type config struct {
-	Mongo         *MongoConfig   `mapstructure:"mongo"`
-	YoutubeConfig *YoutubeConfig `mapstructure:"youtube"`
-	PcoConfig     *PcoConfig     `mapstructure:"pco"`
-	JwtSecret     string         `mapstructure:"jwt_secret"`
-	Env           string         `mapstructure:"env"`
+	Mongo     *MongoConfig             `mapstructure:"mongo"`
+	Vendors   map[string]*VendorConfig `mapstructure:"vendors"`
+	JwtSecret string                   `mapstructure:"jwt_secret"`
+	Env       string                   `mapstructure:"env"`
 }
 
 type MongoConfig struct {
@@ -21,30 +20,21 @@ type MongoConfig struct {
 	EntCol string `mapstructure:"ent_col"`
 }
 
-type YoutubeConfig struct {
-	ClientId     string   `mapstructure:"client_id"`
-	ClientSecret string   `mapstructure:"client_secret"`
-	Scopes       []string `mapstructure:"scopes"`
-	AuthUri      string   `mapstructure:"auth_uri"`
-	TokenUri     string   `mapstructure:"token_uri"`
-	scope        string
+type VendorConfig struct {
+	ClientId      string   `mapstructure:"client_id"`
+	ClientSecret  string   `mapstructure:"client_secret"`
+	Scopes        []string `mapstructure:"scopes"`
+	AuthUri       string   `mapstructure:"auth_uri"`
+	TokenUri      string   `mapstructure:"token_uri"`
+	RefreshEncode string   `mapstructure:"refresh_encode"`
+	scope         string
 }
 
-func (yt *YoutubeConfig) Scope() string {
-	if yt.scope == "" {
-		for i, str := range yt.Scopes {
-			yt.Scopes[i] = fmt.Sprintf("https://www.googleapis.com%s", str)
-		}
-		yt.scope = strings.Join(yt.Scopes, " ")
+func (pco *VendorConfig) Scope() string {
+	if pco.scope == "" {
+		pco.scope = strings.Join(pco.Scopes, " ")
 	}
-	return yt.scope
-}
-
-type PcoConfig struct {
-	ClientId     string `mapstructure:"client_id"`
-	ClientSecret string `mapstructure:"client_secret"`
-	AuthUri      string `mapstructure:"auth_uri"`
-	TokenUri     string `mapstructure:"token_uri"`
+	return pco.scope
 }
 
 var cfg *config
@@ -64,6 +54,11 @@ func Init() {
 	err = viper.Unmarshal(cfg)
 	if err != nil {
 		panic(err)
+	}
+
+	fmt.Printf("%v\n", cfg)
+	for key, value := range cfg.Vendors {
+		fmt.Printf("%s: %v\n", key, value)
 	}
 }
 

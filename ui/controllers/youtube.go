@@ -13,12 +13,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const REDIRECT_URI = "https://capstone.preston-baxter.com:8080/vendor/youtube/callback"
+const YOUTUBE_REDIRECT_URI = "https://capstone.preston-baxter.com:8080/vendor/youtube/callback"
 
 func InitiateYoutubeOuath(c *gin.Context) {
 	conf := config.Config()
+	vendorConfig := conf.Vendors[models.YOUTUBE_VENDOR_NAME]
 
-	init_url, err := url.Parse(conf.YoutubeConfig.AuthUri)
+	init_url, err := url.Parse(vendorConfig.AuthUri)
 	if err != nil {
 		//we should not get here
 		panic(err)
@@ -26,10 +27,10 @@ func InitiateYoutubeOuath(c *gin.Context) {
 
 	q := init_url.Query()
 	//https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps#httprest_1
-	q.Add("client_id", conf.YoutubeConfig.ClientId)
-	q.Add("redirect_uri", REDIRECT_URI)
+	q.Add("client_id", vendorConfig.ClientId)
+	q.Add("redirect_uri", YOUTUBE_REDIRECT_URI)
 	q.Add("response_type", "code")
-	q.Add("scope", conf.YoutubeConfig.Scope())
+	q.Add("scope", vendorConfig.Scope())
 	q.Add("access_type", "offline")
 	//used to prevent CSRF
 	q.Add("state", getAuthHash(c))
@@ -40,6 +41,7 @@ func InitiateYoutubeOuath(c *gin.Context) {
 
 func ReceiveYoutubeOauth(c *gin.Context) {
 	conf := config.Config()
+	vendorConfig := conf.Vendors[models.PCO_VENDOR_NAME]
 	user := getUserFromContext(c)
 
 	if user == nil {
@@ -65,7 +67,7 @@ func ReceiveYoutubeOauth(c *gin.Context) {
 
 	client := http.Client{}
 
-	token_url, err := url.Parse(conf.YoutubeConfig.TokenUri)
+	token_url, err := url.Parse(vendorConfig.TokenUri)
 	if err != nil {
 		//we should not get here
 		panic(err)
@@ -75,9 +77,9 @@ func ReceiveYoutubeOauth(c *gin.Context) {
 	q := token_url.Query()
 
 	q.Add("code", code)
-	q.Add("client_id", conf.YoutubeConfig.ClientId)
-	q.Add("client_secret", conf.YoutubeConfig.ClientSecret)
-	q.Add("redirect_uri", REDIRECT_URI)
+	q.Add("client_id", vendorConfig.ClientId)
+	q.Add("client_secret", vendorConfig.ClientSecret)
+	q.Add("redirect_uri", YOUTUBE_REDIRECT_URI)
 	q.Add("grant_type", "authorization_code")
 
 	req, err := http.NewRequest("POST", token_url.String(), strings.NewReader(q.Encode()))
@@ -124,7 +126,7 @@ func ReceiveYoutubeOauth(c *gin.Context) {
 	vendor := &models.VendorAccount{
 		UserId:           user.Id,
 		OauthCredentials: oauthResp,
-		Name:             "youtube",
+		Name:             models.YOUTUBE_VENDOR_NAME,
 	}
 
 	err = mongo.SaveModel(vendor)
