@@ -77,7 +77,7 @@ func ReceiveYoutubeOauth(c *gin.Context) {
 	q.Add("code", code)
 	q.Add("client_id", conf.YoutubeConfig.ClientId)
 	q.Add("client_secret", conf.YoutubeConfig.ClientSecret)
-	q.Add("redirect_uri", "https://capstone.preston-baxter.com:8080/dashboard")
+	q.Add("redirect_uri", REDIRECT_URI)
 	q.Add("grant_type", "authorization_code")
 
 	req, err := http.NewRequest("POST", token_url.String(), strings.NewReader(q.Encode()))
