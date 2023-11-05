@@ -9,8 +9,8 @@ import (
 const VENDOR_ACCOUNT_TYPE = "vendor_account"
 
 const (
-	YOUTUBE_VENDOR_NAME = "YouTube"
-	PCO_VENDOR_NAME     = "PCO"
+	YOUTUBE_VENDOR_NAME = "youtube"
+	PCO_VENDOR_NAME     = "pco"
 )
 
 

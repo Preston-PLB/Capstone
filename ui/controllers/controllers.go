@@ -26,6 +26,8 @@ func BuildRouter(r *gin.Engine) {
 	})
 
 	r.Use(cors.Default())
+
+	r.Static("/static", "./dist")
 	//mainpage
 	r.GET("/", AuthMiddleware(false), LandingPage)
 
@@ -39,6 +41,9 @@ func BuildRouter(r *gin.Engine) {
 	dashboard := r.Group("/dashboard")
 	dashboard.Use(AuthMiddleware(true))
 	dashboard.GET("", DashboardPage)
+	//Dashboard Forms
+	dashboardForms := dashboard.Group("/forms")
+	dashboardForms.GET("/addAction", GetAddActionForm)
 
 	//Vendor stuff
 	vendor := r.Group("/vendor")
