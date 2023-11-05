@@ -1,4 +1,5 @@
 dist/*
 tmp/*
 **/*_templ.go
+templates/*.html
 docker/tmp/*

@@ -7,13 +7,22 @@ import (
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db/models"
 )
 
-func hasPco(vendors []models.VendorAccount) bool {
+func hasVendor(name string, vendors []models.VendorAccount) bool {
 	for _, vendor := range vendors {
-		if vendor.Name == models.PCO_VENDOR_NAME {
+		if vendor.Name == name {
 			return true
 		}
 	}
 	return false
+
+}
+
+func hasPco(vendors []models.VendorAccount) bool {
+	return hasVendor(models.PCO_VENDOR_NAME, vendors)
+}
+
+func hasYoutube(vendors []models.VendorAccount) bool {
+	return hasVendor(models.YOUTUBE_VENDOR_NAME, vendors)
 }
 
 templ DashboardPage(user *models.User, vendorAccounts []models.VendorAccount, actionMappings []models.ActionMapping) {
@@ -233,7 +242,7 @@ templ DashboardVendorDropDown() {
 	<div class="flex flex-wrap float-right">
 		<div class="w-full sm:w-6/12 md:w-4/12 px-4">
 			<div class="relative inline-flex align-middle w-full">
-				<button class="text-white font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 bg-blueGray-700 ease-linear transition-all duration-150" type="button" onclick="openDropdown(event,&#39;dropdown-id&#39;)">
+				<button class="text-white font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 bg-blueGray-500 ease-linear transition-all duration-150" type="button" onclick="openDropdown(event,&#39;dropdown-id&#39;)">
 					+
 				</button>
 				<div class="hidden bg-white  text-base z-50 float-left py-2 list-none text-left rounded shadow-lg mt-1" style="min-width:12rem" id="dropdown-id">
@@ -320,7 +329,7 @@ templ DashboardActionModalForm(vendors []models.VendorAccount) {
 						<select class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline" placeholder="Choose action source">
 							if hasPco(vendors) {
 								<option value="plan">Plan</option>
-								<option value="calendar">Calendar</option>
+								<option value="calendar" disabled>Calendar</option>
 							} else {
 								<option value="nil">None Available</option>
 							}
@@ -332,27 +341,20 @@ templ DashboardActionModalForm(vendors []models.VendorAccount) {
 				</div>
 			</div>
 			<div class="flex flex-wrap -mx-2 space-y-4 md:space-y-0">
-				<div class="w-full px-2 md:w-1/2">
-					<label class="block mb-1" for="formGridCode_name">First name</label>
-					<input class="w-full h-10 px-3 text-base placeholder-gray-600 border rounded-lg focus:shadow-outline" type="text" id="formGridCode_name"/>
-				</div>
-				<div class="w-full px-2 md:w-1/2">
-					<label class="block mb-1" for="formGridCode_last">Last name</label>
-					<input class="w-full h-10 px-3 text-base placeholder-gray-600 border rounded-lg focus:shadow-outline" type="text" id="formGridCode_last"/>
-				</div>
-			</div>
-			<div class="flex flex-wrap -mx-2 space-y-4 md:space-y-0">
-				<div class="w-full px-2 md:w-1/3">
-					<label class="block mb-1" for="formGridCode_month">Month</label>
-					<input class="w-full h-10 px-3 text-base placeholder-gray-600 border rounded-lg focus:shadow-outline" type="text" id="formGridCode_month"/>
-				</div>
-				<div class="w-full px-2 md:w-1/3">
-					<label class="block mb-1" for="formGridCode_year">Year</label>
-					<input class="w-full h-10 px-3 text-base placeholder-gray-600 border rounded-lg focus:shadow-outline" type="text" id="formGridCode_year"/>
-				</div>
-				<div class="w-full px-2 md:w-1/3">
-					<label class="block mb-1" for="formGridCode_cvc">CVC</label>
-					<input class="w-full h-10 px-3 text-base placeholder-gray-600 border rounded-lg focus:shadow-outline" type="text" id="formGridCode_cvc"/>
+				<div class="w-full">
+					<div class="relative inline-block w-full text-gray-700">
+						<select class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline" placeholder="Choose action source">
+							if hasYoutube(vendors) {
+								<option value="plan">Livestream</option>
+								<option value="calendar" disabled>Video</option>
+							} else {
+								<option value="nil">None Available</option>
+							}
+						</select>
+						<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+							<svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+						</div>
+					</div>
 				</div>
 			</div>
 		</form>
