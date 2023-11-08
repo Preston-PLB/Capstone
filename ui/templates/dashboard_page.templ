@@ -99,7 +99,7 @@ templ DashboardNav(user *models.User) {
 						<input
  							type="text"
  							placeholder="Search"
- 							class="border-0 px-3 py-2 h-12 border border-solid  border-blueGray-500 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-base leading-snug shadow-none outline-none focus:outline-none w-full font-normal"
+ 							class="px-3 py-2 h-12 border border-solid  border-blueGray-500 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-base leading-snug shadow-none outline-none focus:outline-none w-full font-normal"
 						/>
 					</div>
 				</form>
@@ -155,12 +155,12 @@ templ DashboardContentNav(user *models.User) {
 			>
 				<div class="relative flex w-full flex-wrap items-stretch">
 					<span
- 						class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3"
+ 						class="z-10 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3"
 					><i class="fas fa-search"></i></span>
 					<input
  						type="text"
  						placeholder="Search here..."
- 						class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"
+ 						class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"
 					/>
 				</div>
 			</form>
@@ -322,13 +322,13 @@ templ DashboardVendorWidget(vendors []models.VendorAccount) {
 
 templ DashboardActionModalForm(vendors []models.VendorAccount) {
 	<div class="relative p-6 flex-auto">
-		<form class="space-y-4 text-gray-700">
+		<form class="space-y-4 text-gray-700" action="/dashboard/action/add" method="POST">
 			<div class="flex flex-wrap">
 				<div class="w-full">
 					<div class="relative inline-block w-full text-gray-700">
-						<select class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline" placeholder="Choose action source">
+						<select class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline" placeholder="Choose action source" name="source">
 							if hasPco(vendors) {
-								<option value="plan">Plan</option>
+								<option value="pco.plan">Plan</option>
 								<option value="calendar" disabled>Calendar</option>
 							} else {
 								<option value="nil">None Available</option>
@@ -343,10 +343,10 @@ templ DashboardActionModalForm(vendors []models.VendorAccount) {
 			<div class="flex flex-wrap -mx-2 space-y-4 md:space-y-0">
 				<div class="w-full">
 					<div class="relative inline-block w-full text-gray-700">
-						<select class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline" placeholder="Choose action source">
+						<select class="w-full h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline" placeholder="Choose action source" name="action">
 							if hasYoutube(vendors) {
-								<option value="plan">Livestream</option>
-								<option value="calendar" disabled>Video</option>
+								<option value="youtube.livestream">Livestream</option>
+								<option value="video" disabled>Video</option>
 							} else {
 								<option value="nil">None Available</option>
 							}
@@ -356,6 +356,14 @@ templ DashboardActionModalForm(vendors []models.VendorAccount) {
 						</div>
 					</div>
 				</div>
+			</div>
+			<div class="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
+				<button class="text-gray-400 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button" onclick="toggleModal(&#39;add-action-modal&#39;)">
+					Close
+				</button>
+				<button class="bg-blue-700 text-white active:bg-blue-900 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="submit">
+					Save Changes
+				</button>
 			</div>
 		</form>
 	</div>
@@ -380,14 +388,6 @@ templ DashboardActionModal(vendors []models.VendorAccount) {
 				<!--body-->
 				@DashboardActionModalForm(vendors)
 				<!--footer-->
-				<div class="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
-					<button class="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button" onclick="toggleModal(&#39;add-action-modal&#39;)">
-						Close
-					</button>
-					<button class="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button" onclick="toggleModal(&#39;add-action-modal&#39;)">
-						Save Changes
-					</button>
-				</div>
 			</div>
 		</div>
 	</div>

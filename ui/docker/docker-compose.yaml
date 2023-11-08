@@ -5,4 +5,5 @@ services:
     ports:
       - '27017:27017'
     volumes:
-      - ./tmp/mongo:/data/db
+      - /etc/capstone/mongo:/data/db
+

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/spf13/viper"
+	"golang.org/x/oauth2"
 )
 
 type config struct {
@@ -18,6 +19,8 @@ type MongoConfig struct {
 	Uri    string `mapstructure:"uri"`
 	EntDb  string `mapstructure:"ent_db"`
 	EntCol string `mapstructure:"ent_col"`
+	LockDb string `mapstructure:"lock_db"`
+	LockCol string `mapstructure:"lock_col"`
 }
 
 type VendorConfig struct {
@@ -27,14 +30,29 @@ type VendorConfig struct {
 	AuthUri       string   `mapstructure:"auth_uri"`
 	TokenUri      string   `mapstructure:"token_uri"`
 	RefreshEncode string   `mapstructure:"refresh_encode"`
+	WebhookSecret string   `mapstructure:"webhook_secret"`
 	scope         string
 }
 
-func (pco *VendorConfig) Scope() string {
-	if pco.scope == "" {
-		pco.scope = strings.Join(pco.Scopes, " ")
+func (vendor *VendorConfig) Scope() string {
+	if vendor.scope == "" {
+		vendor.scope = strings.Join(vendor.Scopes, " ")
 	}
-	return pco.scope
+	return vendor.scope
+}
+
+func (vendor *VendorConfig) OauthConfig() *oauth2.Config {
+	return &oauth2.Config{
+		ClientID:     vendor.ClientId,
+		ClientSecret: vendor.ClientSecret,
+		Endpoint:     oauth2.Endpoint{
+			AuthURL:       vendor.AuthUri,
+			TokenURL:      vendor.TokenUri,
+			AuthStyle:     oauth2.AuthStyleInParams,
+		},
+		RedirectURL:  "",
+		Scopes:       vendor.Scopes,
+	}
 }
 
 var cfg *config

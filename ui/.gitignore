@@ -3,3 +3,7 @@ tmp/*
 **/*_templ.go
 templates/*.html
 docker/tmp/*
+node_modules/*
+node_modules
+config.yaml
+conf.yaml

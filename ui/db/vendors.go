@@ -2,9 +2,6 @@ package db
 
 import (
 	"context"
-	"fmt"
-	"net/http"
-	"time"
 
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/config"
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db/models"
@@ -33,23 +30,4 @@ func (db *DB) FindVendorAccountByUser(userId primitive.ObjectID) ([]models.Vendo
 	}
 
 	return vendors, nil
-}
-
-//Make
-func (db *DB) MakeRequestWithAccount(req *http.Request, va *models.VendorAccount) (*http.Response, error) {
-	//make new credential and save new credentials to DB
-	if va.OauthCredentials.ExpiresAt.Before(time.Now()) {
-		err := va.OauthCredentials.RefreshAccessToken(va.Name)
-		if err != nil {
-			return nil, err
-		}
-		err = db.SaveModel(va)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	client := http.Client{}
-	req.Header.Add("Authorization", fmt.Sprintf("%s: %s", va.OauthCredentials.TokenType, va.OauthCredentials.AccessToken))
-	return client.Do(req)
 }

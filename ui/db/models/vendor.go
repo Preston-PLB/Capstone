@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"golang.org/x/oauth2"
 )
 
 const VENDOR_ACCOUNT_TYPE = "vendor_account"
@@ -13,14 +14,14 @@ const (
 	PCO_VENDOR_NAME     = "pco"
 )
 
-
 type VendorAccount struct {
 	*CommonFields    `bson:"obj_info"`
-	Id          primitive.ObjectID `bson:"_id,omitempty"`
+	Id               primitive.ObjectID `bson:"_id,omitempty"`
 	UserId           primitive.ObjectID `bson:"user_id,omitempty"`
 	Secret           string             `bson:"secret,omitempty"`
 	OauthCredentials *OauthCredential   `bson:"ouath_credentials,omitempty"`
 	Name             string             `bson:"name"`
+	Locked           string             `bson:"locked"`
 }
 
 func (va *VendorAccount) MongoId() primitive.ObjectID {
@@ -41,4 +42,14 @@ func (va *VendorAccount) UpdateObjectInfo() {
 	}
 	va.UpdatedAt = now
 }
+
+func (va *VendorAccount) Token() *oauth2.Token {
+	return &oauth2.Token{
+		AccessToken:  va.OauthCredentials.AccessToken,
+		TokenType:    va.OauthCredentials.TokenType,
+		RefreshToken: va.OauthCredentials.RefreshToken,
+		Expiry:       va.OauthCredentials.ExpiresAt,
+	}
+}
+
 

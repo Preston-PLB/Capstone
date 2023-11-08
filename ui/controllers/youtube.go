@@ -41,7 +41,7 @@ func InitiateYoutubeOuath(c *gin.Context) {
 
 func ReceiveYoutubeOauth(c *gin.Context) {
 	conf := config.Config()
-	vendorConfig := conf.Vendors[models.PCO_VENDOR_NAME]
+	vendorConfig := conf.Vendors[models.YOUTUBE_VENDOR_NAME]
 	user := getUserFromContext(c)
 
 	if user == nil {

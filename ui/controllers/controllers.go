@@ -41,6 +41,9 @@ func BuildRouter(r *gin.Engine) {
 	dashboard := r.Group("/dashboard")
 	dashboard.Use(AuthMiddleware(true))
 	dashboard.GET("", DashboardPage)
+	//Dashboard Actions
+	dashboardActions := dashboard.Group("/action")
+	dashboardActions.POST("/add", AddActionFromForm)
 	//Dashboard Forms
 	dashboardForms := dashboard.Group("/forms")
 	dashboardForms.GET("/addAction", GetAddActionForm)
