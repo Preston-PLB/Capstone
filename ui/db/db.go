@@ -29,6 +29,7 @@ func NewClient(uri string) (*DB, error) {
 	return &DB{client: client}, nil
 }
 
+//Upserts
 func (db *DB) SaveModel(m Model) error {
 	conf := config.Config()
 
@@ -41,6 +42,20 @@ func (db *DB) SaveModel(m Model) error {
 
 	if res.MatchedCount == 0 && res.ModifiedCount == 0 && res.UpsertedCount == 0 {
 		return errors.New("Failed to update vendor account properly")
+	}
+
+	return nil
+}
+
+//Doesn't upsert
+func (db *DB) InsertModel(m Model) error {
+	conf := config.Config()
+
+	m.UpdateObjectInfo()
+	opts := options.InsertOne()
+	_, err := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).InsertOne(context.Background(), m, opts)
+	if err != nil {
+		return err
 	}
 
 	return nil

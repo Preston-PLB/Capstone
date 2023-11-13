@@ -31,3 +31,24 @@ func (db *DB) FindVendorAccountByUser(userId primitive.ObjectID) ([]models.Vendo
 
 	return vendors, nil
 }
+
+func (db *DB) FindVendorAccountById(vendorId primitive.ObjectID) (*models.VendorAccount, error) {
+	conf := config.Config()
+
+	opts := options.FindOne()
+	res := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).FindOne(context.Background(), bson.M{"_id": vendorId, "obj_info.ent": models.VENDOR_ACCOUNT_TYPE}, opts)
+	if res.Err() != nil {
+		if res.Err() == mongo.ErrNoDocuments {
+			return nil, nil
+		}
+		return nil, res.Err()
+	}
+
+	vendor := &models.VendorAccount{}
+	err := res.Decode(vendor)
+	if err != nil {
+		return nil, err
+	}
+
+	return vendor, nil
+}

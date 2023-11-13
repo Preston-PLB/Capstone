@@ -2,6 +2,8 @@ package models
 
 import (
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type OauthCredential struct {
@@ -13,11 +15,32 @@ type OauthCredential struct {
 	RefreshToken string    `bson:"refresh_token,omitempty" json:"refresh_token,omitempty"`
 }
 
-type OauthRefreshBody struct {
-	ClientId     string `json:"cleint_id"`
-	ClientSecret string `json:"cleint_secret"`
-	GrantType    string `json:"grant_type"`
-	RefreshToken string `json:"refresh_token"`
+const TOKEN_LOCK_TYPE = "token_lock"
+
+type TokenLock struct {
+	*CommonFields `bson:"obj_info"`
+	Id            primitive.ObjectID `bson:"_id"`
+	VendorId      primitive.ObjectID `bson:"vendor_id"`
+	TokenId       string             `bson:"token_id"`
+	Refreshed     bool               `bson:"refreshed"`
 }
 
+func (tl *TokenLock) MongoId() primitive.ObjectID {
 
+	if tl.Id.IsZero() {
+		now := time.Now()
+		tl.Id = primitive.NewObjectIDFromTimestamp(now)
+	}
+
+	return tl.Id
+}
+
+func (tl *TokenLock) UpdateObjectInfo() {
+	now := time.Now()
+	if tl.CommonFields == nil {
+		tl.CommonFields = new(CommonFields)
+		tl.EntityType = TOKEN_LOCK_TYPE
+		tl.CreatedAt = now
+	}
+	tl.UpdatedAt = now
+}
