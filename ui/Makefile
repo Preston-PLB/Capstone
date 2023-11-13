@@ -8,6 +8,14 @@ local-build:
 local-run: local-build
 	./tmp/main
 
+
+infra-clean:
+	cd docker; docker compose down
+
+infra:
+	cd docker; docker compose up -d --remove-orphans
+
+
 build:
 	docker build . -t frontend-service:latest
 	docker tag frontend-service:latest $(BASE_URL)/frontend-service:latest

@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -72,11 +71,6 @@ func Init() {
 	err = viper.Unmarshal(cfg)
 	if err != nil {
 		panic(err)
-	}
-
-	fmt.Printf("%v\n", cfg)
-	for key, value := range cfg.Vendors {
-		fmt.Printf("%s: %v\n", key, value)
 	}
 }
 

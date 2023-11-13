@@ -35,6 +35,8 @@ func (ts *VendorTokenSource) Token() (*oauth2.Token, error) {
 		TokenId:   ts.vendor.OauthCredentials.RefreshToken,
 		Refreshed: false,
 	}
+	//Don't forget to create the mongo id
+	token_lock.MongoId()
 	token_lock.UpdateObjectInfo()
 
 	//try and aquire lock
@@ -42,7 +44,7 @@ func (ts *VendorTokenSource) Token() (*oauth2.Token, error) {
 	_, err := col.InsertOne(context.Background(), token_lock, opts)
 	if err != nil {
 		//If we didn't get the lock. Wait until whoever did refreshed the token
-		if err == mongo.ErrInvalidIndexValue {
+		if mongo.IsDuplicateKeyError(err) {
 			err = ts.waitForToken(token_lock)
 			if err != nil {
 				return nil, err
@@ -106,10 +108,12 @@ func (ts *VendorTokenSource) waitForToken(tl *models.TokenLock) error {
 	defer cancelFunc()
 
 	//Get change stream that looks for our token lock
+	opts := options.ChangeStream().SetFullDocument(options.UpdateLookup)
 	changeStream, err := col.Watch(ctx, mongo.Pipeline{
-		{{Key: "$match", Value: bson.D{{Key: "documentKey", Value: tl.MongoId()}}}},
-	})
+		{{Key: "$match", Value: bson.D{{Key: "fullDocument.vendor_id", Value: tl.VendorId}, {Key: "fullDocument.token_id", Value: tl.TokenId}}}},
+	}, opts)
 	if err != nil {
+
 		return  err
 	}
 	defer changeStream.Close(context.Background())

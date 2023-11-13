@@ -21,7 +21,6 @@ type VendorAccount struct {
 	Secret           string             `bson:"secret,omitempty"`
 	OauthCredentials *OauthCredential   `bson:"ouath_credentials,omitempty"`
 	Name             string             `bson:"name"`
-	Locked           string             `bson:"locked"`
 }
 
 func (va *VendorAccount) MongoId() primitive.ObjectID {
