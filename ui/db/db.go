@@ -11,8 +11,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+//Interface for any object that wants to take advantage of the DB package
 type Model interface {
+
+	//Should return the _id field of the object if it exits
+	//if it is new it should generate a new objectId
 	MongoId() primitive.ObjectID
+
+	//It is expected that this will update the CommonFields part of the model
 	UpdateObjectInfo()
 }
 
