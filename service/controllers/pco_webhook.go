@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/jsonapi"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"golang.org/x/oauth2"
 	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
 )
@@ -98,15 +99,47 @@ func eventMatch(event string) bool {
 }
 
 func youtubeServiceForUser(userId primitive.ObjectID) (*youtube.Service, error) {
+	if client, ok := ytClientMap[userId]; !ok {
+		ytAccount, err := mongo.FindVendorAccountByUser(userId, models.YOUTUBE_VENDOR_NAME)
+		if err != nil {
+			return nil, err
+		}
 
-	client, err := youtube.NewService(context.Background(), option.WithTokenSource(mongo.NewVendorTokenSource()))
-	if err != nil {
-		log.WithError(err).Error("Failed to init youtube service")
-		panic(err)
+		//Build our fancy token source
+		tokenSource := oauth2.ReuseTokenSource(ytAccount.Token(), mongo.NewVendorTokenSource(ytAccount))
+
+		//init service
+		client, err := youtube.NewService(context.Background(), option.WithTokenSource(tokenSource))
+		if err != nil {
+			log.WithError(err).Error("Failed to init youtube service")
+			return nil, err
+		}
+
+		//add user to map
+		ytClientMap[userId] = client
+
+		return client, nil
+	} else {
+		return client, nil
 	}
 }
 
 func ScheduleLiveStreamFromWebhook(c *gin.Context, body *webhooks.EventDelivery) error {
+	//get uid from context. Lots of sanitizing just incase
+	var uid primitive.ObjectID
+	if raw, ok := c.Get("user_bson_id"); ok {
+		uid, ok = raw.(primitive.ObjectID)
+		if !ok {
+			log.Errorf("failed to parse user id to bson object id: %v", raw)
+			return errors.New("Failed to case user id as bson object id")
+		}
+	}
+
+	client, err := youtubeServiceForUser(uid)
+	if err != nil {
+		log.WithError(err).Error("Failed to initialize youtube client")
+		return err
+	}
 
 	return nil
 }

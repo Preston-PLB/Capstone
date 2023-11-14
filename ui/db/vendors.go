@@ -34,7 +34,7 @@ func (db *DB) FindAllVendorAccountsByUser(userId primitive.ObjectID) ([]models.V
 }
 
 //find vendor for user by name
-func (db *DB) FindVendorAccountsByUser(userId primitive.ObjectID, name string) (*models.VendorAccount, error) {
+func (db *DB) FindVendorAccountByUser(userId primitive.ObjectID, name string) (*models.VendorAccount, error) {
 	conf := config.Config()
 
 	opts := options.FindOne()
