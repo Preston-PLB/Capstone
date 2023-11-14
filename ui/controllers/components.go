@@ -13,7 +13,7 @@ func GetAddActionForm(c *gin.Context) {
 		return
 	}
 
-	accounts, err := mongo.FindVendorAccountByUser(user.Id)
+	accounts, err := mongo.FindAllVendorAccountsByUser(user.Id)
 	if err != nil {
 		log.WithError(err).Errorf("Failed to find vendor accounts for: %s", user.Email)
 		serverError(c, "No user available in context")

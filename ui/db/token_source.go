@@ -22,6 +22,7 @@ func (db *DB) NewVendorTokenSource(vendor *models.VendorAccount) *VendorTokenSou
 	return &VendorTokenSource{db: db, vendor: vendor}
 }
 
+// Returns refreshed token from vendor account
 // Not threadsafe, please wrap in a oauth2.RefreshToken
 func (ts *VendorTokenSource) Token() (*oauth2.Token, error) {
 	conf := config.Config()

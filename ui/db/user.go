@@ -11,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+//seraches for a single user by email address
 func (db *DB) FindUserByEmail(email string) (*models.User, error) {
 	conf := config.Config()
 
@@ -33,6 +34,7 @@ func (db *DB) FindUserByEmail(email string) (*models.User, error) {
 	return user, nil
 }
 
+//find user by its unique id
 func (db *DB) FindUserById(id string) (*models.User, error) {
 	conf := config.Config()
 
@@ -60,6 +62,7 @@ func (db *DB) FindUserById(id string) (*models.User, error) {
 	return user, nil
 }
 
+//returns all users
 func (db *DB) FindAllUsers() ([]models.User, error) {
 	conf := config.Config()
 

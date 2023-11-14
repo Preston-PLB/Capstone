@@ -47,7 +47,7 @@ func DashboardPage(c *gin.Context) {
 	waitGroup.Add(2)
 
 	go func(wg *sync.WaitGroup){
-		vendors, errs[0] = mongo.FindVendorAccountByUser(user.MongoId())
+		vendors, errs[0] = mongo.FindAllVendorAccountsByUser(user.MongoId())
 		wg.Done()
 	}(waitGroup)
 

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"regexp"
@@ -11,6 +12,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/jsonapi"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"google.golang.org/api/option"
+	"google.golang.org/api/youtube/v3"
 )
 
 var (
@@ -36,6 +39,7 @@ func ConsumePcoWebhook(c *gin.Context) {
 		c.AbortWithStatus(400)
 		return
 	}
+	c.Set("user_bson_id", userObjectId)
 
 	//read body and handle io in parallel because IO shenanigains
 	wg := new(sync.WaitGroup)
@@ -93,6 +97,16 @@ func eventMatch(event string) bool {
 	}
 }
 
+func youtubeServiceForUser(userId primitive.ObjectID) (*youtube.Service, error) {
+
+	client, err := youtube.NewService(context.Background(), option.WithTokenSource(mongo.NewVendorTokenSource()))
+	if err != nil {
+		log.WithError(err).Error("Failed to init youtube service")
+		panic(err)
+	}
+}
+
 func ScheduleLiveStreamFromWebhook(c *gin.Context, body *webhooks.EventDelivery) error {
+
 	return nil
 }
