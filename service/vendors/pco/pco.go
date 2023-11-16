@@ -12,7 +12,7 @@ const PCO_API_URL = "https://api.planningcenteronline.com"
 
 type PcoApiClient struct {
 	oauth *oauth2.Config
-	token *oauth2.Token
+	tokenSource oauth2.TokenSource
 	client *http.Client
 	url *url.URL
 }
@@ -25,14 +25,13 @@ func NewClient() *PcoApiClient {
 
 	pco := &PcoApiClient{
 		oauth: &oauth2.Config{},
-		token: &oauth2.Token{},
 		url: pco_url,
 	}
 
 	return pco
 }
 
-func NewClientWithOauthConfig(conf *oauth2.Config, token *oauth2.Token) *PcoApiClient {
+func NewClientWithOauthConfig(conf *oauth2.Config, tokenSource oauth2.TokenSource) *PcoApiClient {
 	pco_url, err := url.Parse(PCO_API_URL)
 	if err != nil {
 		panic(err)
@@ -40,7 +39,7 @@ func NewClientWithOauthConfig(conf *oauth2.Config, token *oauth2.Token) *PcoApiC
 
 	pco := &PcoApiClient{
 		oauth: conf,
-		token: token,
+		tokenSource: tokenSource,
 		url: pco_url,
 	}
 
@@ -49,7 +48,7 @@ func NewClientWithOauthConfig(conf *oauth2.Config, token *oauth2.Token) *PcoApiC
 
 func (api *PcoApiClient) getClient() *http.Client {
 	if api.client == nil {
-		api.client = api.oauth.Client(context.Background(), api.token)
+		api.client = oauth2.NewClient(context.Background(), api.tokenSource)
 	}
 
 	return api.client

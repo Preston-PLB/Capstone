@@ -7,7 +7,10 @@ import (
 	"regexp"
 	"sync"
 
+	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/config"
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db/models"
+	"git.preston-baxter.com/Preston_PLB/capstone/webhook-service/vendors/pco"
+	"git.preston-baxter.com/Preston_PLB/capstone/webhook-service/vendors/pco/services"
 	"git.preston-baxter.com/Preston_PLB/capstone/webhook-service/vendors/pco/webhooks"
 	"github.com/gin-gonic/gin"
 	"github.com/google/jsonapi"
@@ -98,7 +101,32 @@ func eventMatch(event string) bool {
 	}
 }
 
+func pcoServiceForUser(userId primitive.ObjectID) (*pco.PcoApiClient, error) {
+	//add youtube client to map if its not there
+	if client, ok := pcoClientMap[userId]; !ok {
+		pcoAccount, err := mongo.FindVendorAccountByUser(userId, models.PCO_VENDOR_NAME)
+		if err != nil {
+			return nil, err
+		}
+
+		//Build our fancy token source
+		tokenSource := oauth2.ReuseTokenSource(pcoAccount.Token(), mongo.NewVendorTokenSource(pcoAccount))
+
+		//init service
+		conf := config.Config()
+		client := pco.NewClientWithOauthConfig(conf.Vendors[models.PCO_VENDOR_NAME].OauthConfig(), tokenSource)
+
+		//add user to map
+		pcoClientMap[userId] = client
+
+		return client, nil
+	} else {
+		return client, nil
+	}
+}
+
 func youtubeServiceForUser(userId primitive.ObjectID) (*youtube.Service, error) {
+	//add youtube client to map if its not there
 	if client, ok := ytClientMap[userId]; !ok {
 		ytAccount, err := mongo.FindVendorAccountByUser(userId, models.YOUTUBE_VENDOR_NAME)
 		if err != nil {
@@ -135,11 +163,19 @@ func ScheduleLiveStreamFromWebhook(c *gin.Context, body *webhooks.EventDelivery)
 		}
 	}
 
-	client, err := youtubeServiceForUser(uid)
+	ytClient, err := youtubeServiceForUser(uid)
 	if err != nil {
 		log.WithError(err).Error("Failed to initialize youtube client")
 		return err
 	}
+
+	pcoClient, err := pcoServiceForUser(uid)
+	if err != nil {
+		log.WithError(err).Error("Failed to initialize youtube client")
+		return err
+	}
+
+	planUpdate := &services.Plan{}
 
 	return nil
 }
