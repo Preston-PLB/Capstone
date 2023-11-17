@@ -50,5 +50,3 @@ func (va *VendorAccount) Token() *oauth2.Token {
 		Expiry:       va.OauthCredentials.ExpiresAt,
 	}
 }
-
-

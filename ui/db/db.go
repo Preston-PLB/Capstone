@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-//Interface for any object that wants to take advantage of the DB package
+// Interface for any object that wants to take advantage of the DB package
 type Model interface {
 
 	//Should return the _id field of the object if it exits
@@ -35,7 +35,7 @@ func NewClient(uri string) (*DB, error) {
 	return &DB{client: client}, nil
 }
 
-//Upserts
+// Upserts
 func (db *DB) SaveModel(m Model) error {
 	conf := config.Config()
 
@@ -81,7 +81,7 @@ func (db *DB) SaveModels(m ...Model) error {
 	return nil
 }
 
-//Doesn't upsert
+// Doesn't upsert
 func (db *DB) InsertModel(m Model) error {
 	conf := config.Config()
 

@@ -8,10 +8,10 @@ import (
 
 const (
 	STATUS_PRIVATE = "private"
-	STATUS_PUBLIC = "public"
+	STATUS_PUBLIC  = "public"
 )
 
-//Inserts Broadcast into youtube
+// Inserts Broadcast into youtube
 func InsertBroadcast(service *youtube.Service, title string, startTime time.Time, privacyStatus string) (*youtube.LiveBroadcast, error) {
 	liveBroadcast := &youtube.LiveBroadcast{
 		Snippet: &youtube.LiveBroadcastSnippet{

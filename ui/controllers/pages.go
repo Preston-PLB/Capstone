@@ -46,12 +46,12 @@ func DashboardPage(c *gin.Context) {
 	waitGroup := new(sync.WaitGroup)
 	waitGroup.Add(2)
 
-	go func(wg *sync.WaitGroup){
+	go func(wg *sync.WaitGroup) {
 		vendors, errs[0] = mongo.FindAllVendorAccountsByUser(user.MongoId())
 		wg.Done()
 	}(waitGroup)
 
-	go func(wg *sync.WaitGroup){
+	go func(wg *sync.WaitGroup) {
 		actions, errs[1] = mongo.FindActionMappingsByUser(user.MongoId())
 		wg.Done()
 	}(waitGroup)
@@ -67,7 +67,6 @@ func DashboardPage(c *gin.Context) {
 			return
 		}
 	}
-
 
 	renderTempl(c, templates.DashboardPage(user, vendors, actions))
 }

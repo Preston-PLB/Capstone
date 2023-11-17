@@ -42,13 +42,13 @@ func AddActionFromForm(c *gin.Context) {
 	//
 
 	am := &models.ActionMapping{
-		UserId:       user.Id,
-		SourceEvent:  &models.Event{
+		UserId: user.Id,
+		SourceEvent: &models.Event{
 			VendorName: source[0],
 			Key:        source[1],
 			Fields:     map[string]string{},
 		},
-		Action:       &models.Action{
+		Action: &models.Action{
 			VendorName: action[0],
 			Type:       action[1],
 			Fields:     map[string]string{},

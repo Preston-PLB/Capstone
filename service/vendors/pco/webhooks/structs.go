@@ -7,7 +7,7 @@ import (
 	"github.com/google/jsonapi"
 )
 
-//Structure delivered to target when sending webhooks
+// Structure delivered to target when sending webhooks
 type EventDelivery struct {
 	//uuid of the EventDelivery
 	ID string `jsonapi:"primary,EventDelivery"`
@@ -22,7 +22,7 @@ type EventDelivery struct {
 	Organization *services.Organization `jsonapi:"relation,organization"`
 }
 
-//Unmarshall payload of EventDelivery into the struct you think it is
+// Unmarshall payload of EventDelivery into the struct you think it is
 func (event *EventDelivery) UnmarshallPayload(obj any) error {
 	return jsonapi.UnmarshalPayload(strings.NewReader(event.Payload), obj)
 }

@@ -74,7 +74,7 @@ func TestRefreshToken(t *testing.T) {
 	wg := new(sync.WaitGroup)
 	wg.Add(2)
 
-	go func(tkr oauth2.TokenSource, wg *sync.WaitGroup){
+	go func(tkr oauth2.TokenSource, wg *sync.WaitGroup) {
 		defer wg.Done()
 		var err error
 		tk1, err = tkr.Token()
@@ -84,7 +84,7 @@ func TestRefreshToken(t *testing.T) {
 		}
 	}(tkr1, wg)
 
-	go func(tkr oauth2.TokenSource, wg *sync.WaitGroup){
+	go func(tkr oauth2.TokenSource, wg *sync.WaitGroup) {
 		defer wg.Done()
 		var err error
 		tk2, err = tkr.Token()
@@ -92,7 +92,7 @@ func TestRefreshToken(t *testing.T) {
 			t.Errorf("got err = %v; want none", err)
 			return
 		}
-	}(tkr2,wg)
+	}(tkr2, wg)
 
 	wg.Wait()
 

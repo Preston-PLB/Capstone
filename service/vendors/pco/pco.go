@@ -11,10 +11,10 @@ import (
 const PCO_API_URL = "https://api.planningcenteronline.com"
 
 type PcoApiClient struct {
-	oauth *oauth2.Config
+	oauth       *oauth2.Config
 	tokenSource oauth2.TokenSource
-	client *http.Client
-	url *url.URL
+	client      *http.Client
+	url         *url.URL
 }
 
 func NewClient() *PcoApiClient {
@@ -25,7 +25,7 @@ func NewClient() *PcoApiClient {
 
 	pco := &PcoApiClient{
 		oauth: &oauth2.Config{},
-		url: pco_url,
+		url:   pco_url,
 	}
 
 	return pco
@@ -38,9 +38,9 @@ func NewClientWithOauthConfig(conf *oauth2.Config, tokenSource oauth2.TokenSourc
 	}
 
 	pco := &PcoApiClient{
-		oauth: conf,
+		oauth:       conf,
 		tokenSource: tokenSource,
-		url: pco_url,
+		url:         pco_url,
 	}
 
 	return pco

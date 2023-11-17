@@ -10,7 +10,7 @@ const USER_TYPE string = "user"
 
 type User struct {
 	*CommonFields `bson:"obj_info"`
-	Id       primitive.ObjectID `bson:"_id"`
+	Id            primitive.ObjectID `bson:"_id"`
 	Email         string             `bson:"email,omitempty"`
 	PassowrdHash  string             `bson:"password_hash,omitempty"`
 }

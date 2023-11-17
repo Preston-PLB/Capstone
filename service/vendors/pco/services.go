@@ -8,7 +8,7 @@ import (
 	"github.com/google/jsonapi"
 )
 
-func (api *PcoApiClient) GetPlan(service_type_id, plan_id string) (*services.Plan, error){
+func (api *PcoApiClient) GetPlan(service_type_id, plan_id string) (*services.Plan, error) {
 	api.Url().Path = fmt.Sprintf("/services/v2/service_types/%s/plans/%s", service_type_id, plan_id)
 
 	req, err := http.NewRequest(http.MethodGet, api.Url().String(), nil)

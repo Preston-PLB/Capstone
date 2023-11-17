@@ -25,8 +25,8 @@ type Action struct {
 }
 
 type Event struct {
-	VendorName string `bson:"vendor_name,omitempty"`
-	Key        string `bson:"key,omitempty"`
+	VendorName string            `bson:"vendor_name,omitempty"`
+	Key        string            `bson:"key,omitempty"`
 	Fields     map[string]string `bson:"fields,omitempty"`
 }
 

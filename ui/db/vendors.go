@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-//return all vendor accounts for a user
+// return all vendor accounts for a user
 func (db *DB) FindAllVendorAccountsByUser(userId primitive.ObjectID) ([]models.VendorAccount, error) {
 	conf := config.Config()
 
@@ -33,7 +33,7 @@ func (db *DB) FindAllVendorAccountsByUser(userId primitive.ObjectID) ([]models.V
 	return vendors, nil
 }
 
-//find vendor for user by name
+// find vendor for user by name
 func (db *DB) FindVendorAccountByUser(userId primitive.ObjectID, name string) (*models.VendorAccount, error) {
 	conf := config.Config()
 
@@ -55,7 +55,7 @@ func (db *DB) FindVendorAccountByUser(userId primitive.ObjectID, name string) (*
 	return vendor, nil
 }
 
-//find vendoraccount by its unique id
+// find vendoraccount by its unique id
 func (db *DB) FindVendorAccountById(vendorId primitive.ObjectID) (*models.VendorAccount, error) {
 	conf := config.Config()
 

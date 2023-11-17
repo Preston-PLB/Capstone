@@ -11,9 +11,9 @@ import (
 )
 
 var (
-	log         *logrus.Logger
-	mongo       *db.DB
-	ytClientMap map[primitive.ObjectID]*youtube.Service
+	log          *logrus.Logger
+	mongo        *db.DB
+	ytClientMap  map[primitive.ObjectID]*youtube.Service
 	pcoClientMap map[primitive.ObjectID]*pco.PcoApiClient
 )
 

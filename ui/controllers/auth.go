@@ -146,7 +146,6 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
-
 	if user == nil {
 		log.Warnf("No user was found for: %s", reqBody.Email)
 		renderTempl(c, templates.LoginPage(fmt.Sprintf("No user found for %s", reqBody.Email)))

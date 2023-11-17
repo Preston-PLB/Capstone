@@ -90,10 +90,10 @@ func (ts *VendorTokenSource) Token() (*oauth2.Token, error) {
 	return token, nil
 }
 
-//Allow us to check for kind of error at the end
+// Allow us to check for kind of error at the end
 var TokenWaitExpired error = errors.New("Waiting for token to refresh took too long")
 
-//Used to extract the token lock that was updated when the change stream alerts
+// Used to extract the token lock that was updated when the change stream alerts
 type tokenLockChangeEvent struct {
 	TokenLock *models.TokenLock `bson:"fullDocument"`
 }
@@ -115,7 +115,7 @@ func (ts *VendorTokenSource) waitForToken(tl *models.TokenLock) error {
 	}, opts)
 	if err != nil {
 
-		return  err
+		return err
 	}
 	defer changeStream.Close(context.Background())
 

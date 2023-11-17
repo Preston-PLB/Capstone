@@ -106,11 +106,10 @@ func ReceiveYoutubeOauth(c *gin.Context) {
 	}
 
 	if resp.StatusCode != 200 {
-		log.Errorf("Response failed with status code: %d. Error: %s", resp.StatusCode ,string(rawBody))
+		log.Errorf("Response failed with status code: %d. Error: %s", resp.StatusCode, string(rawBody))
 		c.AbortWithStatus(502)
 		return
 	}
-
 
 	oauthResp := &models.OauthCredential{}
 	err = json.Unmarshal(rawBody, oauthResp)

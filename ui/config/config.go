@@ -15,10 +15,10 @@ type config struct {
 }
 
 type MongoConfig struct {
-	Uri    string `mapstructure:"uri"`
-	EntDb  string `mapstructure:"ent_db"`
-	EntCol string `mapstructure:"ent_col"`
-	LockDb string `mapstructure:"lock_db"`
+	Uri     string `mapstructure:"uri"`
+	EntDb   string `mapstructure:"ent_db"`
+	EntCol  string `mapstructure:"ent_col"`
+	LockDb  string `mapstructure:"lock_db"`
 	LockCol string `mapstructure:"lock_col"`
 }
 
@@ -44,13 +44,13 @@ func (vendor *VendorConfig) OauthConfig() *oauth2.Config {
 	return &oauth2.Config{
 		ClientID:     vendor.ClientId,
 		ClientSecret: vendor.ClientSecret,
-		Endpoint:     oauth2.Endpoint{
-			AuthURL:       vendor.AuthUri,
-			TokenURL:      vendor.TokenUri,
-			AuthStyle:     oauth2.AuthStyleInParams,
+		Endpoint: oauth2.Endpoint{
+			AuthURL:   vendor.AuthUri,
+			TokenURL:  vendor.TokenUri,
+			AuthStyle: oauth2.AuthStyleInParams,
 		},
-		RedirectURL:  "",
-		Scopes:       vendor.Scopes,
+		RedirectURL: "",
+		Scopes:      vendor.Scopes,
 	}
 }
 
