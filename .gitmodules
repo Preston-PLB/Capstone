@@ -1,3 +1,6 @@
 [submodule "libs/oauth2"]
 	path = libs/oauth2
 	url = https://git.preston-baxter.com/Preston_PLB/oauth2.git
+[submodule "libs/jsonapi"]
+	path = libs/jsonapi
+	url = https://git.preston-baxter.com/Preston_PLB/jsonapi.git
