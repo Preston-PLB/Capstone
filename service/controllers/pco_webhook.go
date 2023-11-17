@@ -18,6 +18,7 @@ import (
 	"golang.org/x/oauth2"
 	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
+	yt_helpers "git.preston-baxter.com/Preston_PLB/capstone/webhook-service/vendors/youtube"
 )
 
 var (
@@ -152,7 +153,7 @@ func youtubeServiceForUser(userId primitive.ObjectID) (*youtube.Service, error) 
 	}
 }
 
-func ScheduleLiveStreamFromWebhook(c *gin.Context, body *webhooks.EventDelivery) error {
+func ScheduleBroadcastFromWebhook(c *gin.Context, body *webhooks.EventDelivery) error {
 	//get uid from context. Lots of sanitizing just incase
 	var uid primitive.ObjectID
 	if raw, ok := c.Get("user_bson_id"); ok {
@@ -163,19 +164,51 @@ func ScheduleLiveStreamFromWebhook(c *gin.Context, body *webhooks.EventDelivery)
 		}
 	}
 
+	//Load ytClient for user. It is fetched from cache or created
 	ytClient, err := youtubeServiceForUser(uid)
 	if err != nil {
 		log.WithError(err).Error("Failed to initialize youtube client")
 		return err
 	}
 
+	//Load pcoClient for user. It is fetched from cache or created
 	pcoClient, err := pcoServiceForUser(uid)
 	if err != nil {
 		log.WithError(err).Error("Failed to initialize youtube client")
 		return err
 	}
 
-	planUpdate := &services.Plan{}
+	//deserialize the payload
+	payload := &services.Plan{}
+	err = body.UnmarshallPayload(payload)
+	if err != nil {
+		log.WithError(err).Error("Failed to unmarshall body")
+		return err
+	}
+
+	//create the broadcast
+	//TODO: handle update
+	//TODO: handle delete
+	switch body.Name {
+	case "services.v2.events.plan.created":
+		return scheduleNewBroadcastFromWebhook(c, payload, ytClient, pcoClient)
+	default:
+		return fmt.Errorf("Unkown event error: %s", body.Name)
+	}
+}
+
+func scheduleNewBroadcastFromWebhook(c *gin.Context, plan *services.Plan, ytClient *youtube.Service, pcoClient *pco.PcoApiClient) error {
+	times, err := pcoClient.GetPlanTimes(plan.ServiceType.Id, plan.Id)
+	if err != nil {
+		log.WithError(err).Error("Failed to get plan times")
+		return err
+	}
+
+	broadcast, err := yt_helpers.InsertBroadcast(ytClient, plan.Title, times.StartsAt, yt_helpers.STATUS_PRIVATE)
+	if err != nil {
+		log.WithError(err).Error("Failed to schedule broadcast")
+		return err
+	}
 
 	return nil
 }

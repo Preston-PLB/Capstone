@@ -1,6 +1,11 @@
 package webhooks
 
-import "git.preston-baxter.com/Preston_PLB/capstone/webhook-service/vendors/pco/services"
+import (
+	"strings"
+
+	"git.preston-baxter.com/Preston_PLB/capstone/webhook-service/vendors/pco/services"
+	"github.com/google/jsonapi"
+)
 
 //Structure delivered to target when sending webhooks
 type EventDelivery struct {
@@ -15,4 +20,9 @@ type EventDelivery struct {
 	Payload string `jsonapi:"attr,attempt"`
 	//Owner Organization of the event
 	Organization *services.Organization `jsonapi:"relation,organization"`
+}
+
+//Unmarshall payload of EventDelivery into the struct you think it is
+func (event *EventDelivery) UnmarshallPayload(obj any) error {
+	return jsonapi.UnmarshalPayload(strings.NewReader(event.Payload), obj)
 }
