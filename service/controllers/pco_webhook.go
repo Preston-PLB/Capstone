@@ -12,18 +12,18 @@ import (
 	"git.preston-baxter.com/Preston_PLB/capstone/webhook-service/vendors/pco"
 	"git.preston-baxter.com/Preston_PLB/capstone/webhook-service/vendors/pco/services"
 	"git.preston-baxter.com/Preston_PLB/capstone/webhook-service/vendors/pco/webhooks"
+	yt_helpers "git.preston-baxter.com/Preston_PLB/capstone/webhook-service/vendors/youtube"
 	"github.com/gin-gonic/gin"
 	"github.com/google/jsonapi"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/oauth2"
 	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
-	yt_helpers "git.preston-baxter.com/Preston_PLB/capstone/webhook-service/vendors/youtube"
 )
 
 var (
 	eventRegexKeys = map[string]string{"plan": `^services\.v2\.events\.plan\..*`}
-	actionFuncMap = map[string]actionFunc{"youtube.livestream": ScheduleLiveStreamFromWebhook}
+	actionFuncMap  = map[string]actionFunc{"youtube.livestream": ScheduleBroadcastFromWebhook}
 )
 
 type actionFunc func(*gin.Context, *webhooks.EventDelivery) error
@@ -71,7 +71,6 @@ func ConsumePcoWebhook(c *gin.Context) {
 		_ = c.AbortWithError(501, err)
 		return
 	}
-
 
 	//perform actions
 	//loop through all actions a user has
@@ -186,29 +185,55 @@ func ScheduleBroadcastFromWebhook(c *gin.Context, body *webhooks.EventDelivery) 
 		return err
 	}
 
+	//Save audit point
+	eventRecievedAudit := &models.EventRecieved{
+		UserId:     uid,
+		VendorName: models.PCO_VENDOR_NAME,
+		Type:       body.Name,
+	}
+	if err := mongo.SaveModel(eventRecievedAudit); err != nil {
+		log.WithError(err).WithField("EventRecieved", eventRecievedAudit).Error("Failed to save audit event. Logging here and resuming")
+	}
+
 	//create the broadcast
 	//TODO: handle update
 	//TODO: handle delete
+	var broadcast *youtube.LiveBroadcast
 	switch body.Name {
 	case "services.v2.events.plan.created":
-		return scheduleNewBroadcastFromWebhook(c, payload, ytClient, pcoClient)
+		broadcast, err = scheduleNewBroadcastFromWebhook(c, payload, ytClient, pcoClient)
 	default:
 		return fmt.Errorf("Unkown event error: %s", body.Name)
 	}
-}
 
-func scheduleNewBroadcastFromWebhook(c *gin.Context, plan *services.Plan, ytClient *youtube.Service, pcoClient *pco.PcoApiClient) error {
-	times, err := pcoClient.GetPlanTimes(plan.ServiceType.Id, plan.Id)
-	if err != nil {
-		log.WithError(err).Error("Failed to get plan times")
-		return err
+	//build audit trail after action was taken
+	broadcastModel := &models.YoutubeBroadcast{
+		UserId:  uid,
+		Details: broadcast,
 	}
 
-	broadcast, err := yt_helpers.InsertBroadcast(ytClient, plan.Title, times.StartsAt, yt_helpers.STATUS_PRIVATE)
+	actionTaken := &models.ActionTaken{
+		UserId:          uid,
+		TriggeringEvent: eventRecievedAudit.MongoId(),
+		Result:          []primitive.ObjectID{broadcastModel.MongoId()},
+		VendorName:      models.YOUTUBE_VENDOR_NAME,
+	}
+
+	//save audit trail
+	err = mongo.SaveModels(broadcastModel, actionTaken)
 	if err != nil {
-		log.WithError(err).Error("Failed to schedule broadcast")
+		log.WithError(err).Error("Failed to unmarshall body")
 		return err
 	}
 
 	return nil
+}
+
+func scheduleNewBroadcastFromWebhook(c *gin.Context, plan *services.Plan, ytClient *youtube.Service, pcoClient *pco.PcoApiClient) (*youtube.LiveBroadcast, error) {
+	times, err := pcoClient.GetPlanTimes(plan.ServiceType.Id, plan.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return yt_helpers.InsertBroadcast(ytClient, plan.Title, times.StartsAt, yt_helpers.STATUS_PRIVATE)
 }

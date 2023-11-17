@@ -47,7 +47,35 @@ func (db *DB) SaveModel(m Model) error {
 	}
 
 	if res.MatchedCount == 0 && res.ModifiedCount == 0 && res.UpsertedCount == 0 {
-		return errors.New("Failed to update vendor account properly")
+		return errors.New("Failed to save model properly")
+	}
+
+	return nil
+}
+
+func (db *DB) SaveModels(m ...Model) error {
+	conf := config.Config()
+
+	writeEntry := make([]mongo.WriteModel, len(m))
+
+	for index, model := range m {
+		entry := mongo.NewUpdateOneModel()
+		entry.SetFilter(bson.M{"_id": model.MongoId})
+		entry.SetUpsert(true)
+		entry.SetUpdate(bson.M{"$set": model})
+		model.UpdateObjectInfo()
+
+		writeEntry[index] = entry
+	}
+
+	opts := options.BulkWrite()
+	res, err := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).BulkWrite(context.Background(), writeEntry, opts)
+	if err != nil {
+		return err
+	}
+
+	if res.MatchedCount == 0 && res.ModifiedCount == 0 && res.UpsertedCount == 0 {
+		return errors.New("Failed to save models properly")
 	}
 
 	return nil
