@@ -81,5 +81,4 @@ require (
 replace git.preston-baxter.com/Preston_PLB/capstone/frontend-service => ../ui
 
 replace golang.org/x/oauth2 => ../libs/oauth2
-
 replace github.com/google/jsonapi => ../libs/jsonapi
