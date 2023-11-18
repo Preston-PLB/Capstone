@@ -1,6 +1,8 @@
 module git.preston-baxter.com/Preston_PLB/capstone/webhook-service
 
-go 1.19
+go 1.21
+
+toolchain go1.21.4
 
 require (
 	git.preston-baxter.com/Preston_PLB/capstone/frontend-service v0.0.0-00010101000000-000000000000
@@ -79,3 +81,5 @@ require (
 replace git.preston-baxter.com/Preston_PLB/capstone/frontend-service => ../ui
 
 replace golang.org/x/oauth2 => ../libs/oauth2
+
+replace github.com/google/jsonapi => ../libs/jsonapi
