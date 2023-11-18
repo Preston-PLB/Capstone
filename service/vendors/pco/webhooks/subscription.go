@@ -3,25 +3,25 @@ package webhooks
 import "time"
 
 type Subscription struct {
-	Id                 string    `jsonapi:"primary,Subscription"`
+	Id                 string    `jsonapi:"primary,Subscription" bson:"id"`
 	//attrs
-	Active             bool      `jsonapi:"attr,active,omitempty"`
-	ApplicationId      string    `jsonapi:"attr,application_id,omitempty"`
-	AuthenticitySecret bool      `jsonapi:"attr,authenticity_secret,omitempty"`
-	CreatedAt          time.Time `jsonapi:"attr,created_at,omitempty"`
-	UpdatedAt          time.Time `jsonapi:"attr,updated_at,omitempty"`
-	Name               string    `jsonapi:"attr,name,omitempty"`
-	Url                string    `jsonapi:"attr,url,omitempty"`
+	Active             bool      `jsonapi:"attr,active,omitempty" bson:"active"`
+	ApplicationId      string    `jsonapi:"attr,application_id,omitempty" bson:"application_id"`
+	AuthenticitySecret bool      `jsonapi:"attr,authenticity_secret,omitempty" bson:"authenticity_secret"`
+	CreatedAt          time.Time `jsonapi:"attr,created_at,omitempty" bson:"created_at"`
+	UpdatedAt          time.Time `jsonapi:"attr,updated_at,omitempty" bson:"updated_at"`
+	Name               string    `jsonapi:"attr,name,omitempty" bson:"name"`
+	Url                string    `jsonapi:"attr,url,omitempty" bson:"url"`
 }
 
 type WebhookSubscription struct {
-	Id                 string    `jsonapi:"primary,WebhookSubscription"`
+	Id                 string    `jsonapi:"primary,WebhookSubscription" bson:"id"`
 	//attrs
-	Active             bool      `jsonapi:"attr,active,omitempty"`
-	ApplicationId      string    `jsonapi:"attr,application_id,omitempty"`
-	AuthenticitySecret bool      `jsonapi:"attr,authenticity_secret,omitempty"`
-	CreatedAt          time.Time `jsonapi:"attr,created_at,omitempty"`
-	UpdatedAt          time.Time `jsonapi:"attr,updated_at,omitempty"`
-	Name               string    `jsonapi:"attr,name,omitempty"`
-	Url                string    `jsonapi:"attr,url,omitempty"`
+	Active             bool      `jsonapi:"attr,active,omitempty" bson:"active"`
+	ApplicationId      string    `jsonapi:"attr,application_id,omitempty" bson:"application_id"`
+	AuthenticitySecret bool      `jsonapi:"attr,authenticity_secret,omitempty" bson:"authenticity_secret"`
+	CreatedAt          time.Time `jsonapi:"attr,created_at,omitempty" bson:"created_at"`
+	UpdatedAt          time.Time `jsonapi:"attr,updated_at,omitempty" bson:"updated_at"`
+	Name               string    `jsonapi:"attr,name,omitempty" bson:"name"`
+	Url                string    `jsonapi:"attr,url,omitempty" bson:"url"`
 }
