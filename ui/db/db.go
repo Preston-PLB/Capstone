@@ -81,7 +81,7 @@ func (db *DB) SaveModels(m ...Model) error {
 	return nil
 }
 
-//For allowing more varidaic like things
+// For allowing more varidaic like things
 func saveModels[T Model](db *DB, m ...T) error {
 	conf := config.Config()
 

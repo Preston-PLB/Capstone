@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-//using userId and event string return PCO Subscriptions saved to the DB
+// using userId and event string return PCO Subscriptions saved to the DB
 func (db *DB) FindPcoSubscriptionForUser(userId primitive.ObjectID, eventName string) (*models.PcoSubscription, error) {
 	conf := config.Config()
 
@@ -35,14 +35,14 @@ func (db *DB) FindPcoSubscriptionForUser(userId primitive.ObjectID, eventName st
 	return subscription, nil
 }
 
-//Okay so learned something here. Interfaces are determined implemented for the type a method is related to.
-//This function is not implemented for DB it is implemented for *DB and that is important
-func (db *DB) SaveSubscriptionsForUser(userId primitive.ObjectID, subscriptions ...webhooks.Subscription) (error) {
+// Okay so learned something here. Interfaces are determined implemented for the type a method is related to.
+// This function is not implemented for DB it is implemented for *DB and that is important
+func (db *DB) SaveSubscriptionsForUser(userId primitive.ObjectID, subscriptions ...webhooks.Subscription) error {
 	mods := make([]*models.PcoSubscription, 0, len(subscriptions))
 	for _, sub := range subscriptions {
 		mods = append(mods, &models.PcoSubscription{
-			UserId:       userId,
-			Details:      &sub,
+			UserId:  userId,
+			Details: &sub,
 		})
 	}
 

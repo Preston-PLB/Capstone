@@ -3,8 +3,8 @@ package models
 import (
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"git.preston-baxter.com/Preston_PLB/capstone/webhook-service/vendors/pco/webhooks"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 const PCO_SUBSCRIPTION_TYPE = "pco_subscription"

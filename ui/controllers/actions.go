@@ -15,7 +15,7 @@ import (
 type actionFunc func(user *models.User) error
 
 var (
-	actionFuncs      map[string]actionFunc = map[string]actionFunc{"pco.plan": setupPcoSubscriptions}
+	actionFuncs      map[string]actionFunc            = map[string]actionFunc{"pco.plan": setupPcoSubscriptions}
 	webhooksTemplate map[string]webhooks.Subscription = map[string]webhooks.Subscription{
 		"services.v2.events.plan.created": {
 			Active: true,
@@ -111,7 +111,7 @@ func setupPcoSubscriptions(user *models.User) error {
 	webhookMap := make(map[string]webhooks.Subscription)
 	subscriptions, err := pcoApi.GetSubscriptions()
 	//Loop through found subscriptions
-	for _, sub := range subscriptions{
+	for _, sub := range subscriptions {
 		//if subsciption is in the templates look to add it to our map
 		if templ, ok := webhooksTemplate[sub.Name]; ok {
 			//if the subscription is for our url add it to our map
@@ -127,9 +127,9 @@ func setupPcoSubscriptions(user *models.User) error {
 	for _, templ := range webhooksTemplate {
 		if _, ok := webhookMap[templ.Name]; !ok {
 			builtHooks = append(builtHooks, webhooks.Subscription{
-				Active:             false,
-				Name:               templ.Name,
-				Url:                fmt.Sprintf(templ.Url, conf.AppSettings.WebhookServiceUrl, user.Id.Hex()),
+				Active: false,
+				Name:   templ.Name,
+				Url:    fmt.Sprintf(templ.Url, conf.AppSettings.WebhookServiceUrl, user.Id.Hex()),
 			})
 		}
 	}

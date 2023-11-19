@@ -28,7 +28,7 @@ var (
 
 type actionFunc func(*gin.Context, *webhooks.EventDelivery) error
 
-func userIdFromContext(c *gin.Context) (*primitive.ObjectID) {
+func userIdFromContext(c *gin.Context) *primitive.ObjectID {
 	if id, ok := c.Get("user_bson_id"); !ok {
 		userId := c.Param("userid")
 

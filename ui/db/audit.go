@@ -13,7 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-//return audit trail for user
+// return audit trail for user
 func (db *DB) FindAuditTrailForUser(userId primitive.ObjectID) ([]models.EventRecieved, []models.ActionTaken, error) {
 	conf := config.Config()
 
@@ -21,7 +21,6 @@ func (db *DB) FindAuditTrailForUser(userId primitive.ObjectID) ([]models.EventRe
 	wg := new(sync.WaitGroup)
 	wg.Add(2)
 	errs := make([]error, 2)
-
 
 	events := []models.EventRecieved{}
 	actions := []models.ActionTaken{}
