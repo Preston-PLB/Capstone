@@ -15,7 +15,7 @@ RUN go mod download
 COPY ui/ .
 
 RUN rm **/*_templ.go; templ generate -path ./templates
-RUN go build -o main
+RUN GOEXPERIMENT=loopvar go build -o main
 
 #Build NPM stuff
 FROM node:18-alpine AS node-builder

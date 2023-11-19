@@ -10,7 +10,7 @@ RUN go mod download
 
 COPY ./service .
 
-RUN go build -o main
+RUN GOEXPERIMENT=loopvar go build -o main
 
 FROM alpine:latest
 
