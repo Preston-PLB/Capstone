@@ -28,34 +28,47 @@ var (
 
 type actionFunc func(*gin.Context, *webhooks.EventDelivery) error
 
+func userIdFromContext(c *gin.Context) (*primitive.ObjectID) {
+	if id, ok := c.Get("user_bson_id"); !ok {
+		userId := c.Param("userid")
+
+		if userId == "" {
+			log.Warn("Webhook did not contain user id. Rejecting")
+			c.AbortWithStatus(404)
+			return nil
+		}
+
+		userObjectId, err := primitive.ObjectIDFromHex(userId)
+		if err != nil {
+			log.WithError(err).Warn("User Id was malformed")
+			c.AbortWithStatus(400)
+			return nil
+		}
+		c.Set("user_bson_id", userObjectId)
+		return &userObjectId
+	} else {
+		if objId, ok := id.(primitive.ObjectID); ok {
+			return &objId
+		} else {
+			return nil
+		}
+	}
+}
+
 func ConsumePcoWebhook(c *gin.Context) {
-	userId := c.Param("userid")
-
-	if userId == "" {
-		log.Warn("Webhook did not contain user id. Rejecting")
-		c.AbortWithStatus(404)
-		return
-	}
-
-	//get actions for user
-	userObjectId, err := primitive.ObjectIDFromHex(userId)
-	if err != nil {
-		log.WithError(err).Warn("User Id was malformed")
-		c.AbortWithStatus(400)
-		return
-	}
-	c.Set("user_bson_id", userObjectId)
+	userObjectId := userIdFromContext(c)
 
 	//read body and handle io in parallel because IO shenanigains
 	wg := new(sync.WaitGroup)
 	wg.Add(2)
 
+	//get actions for user
 	var actionMappings []models.ActionMapping
 	var webhookBody *webhooks.EventDelivery
 	errs := make([]error, 2)
 
 	go func(wg *sync.WaitGroup) {
-		actionMappings, errs[0] = mongo.FindActionMappingsByUser(userObjectId)
+		actionMappings, errs[0] = mongo.FindActionMappingsByUser(*userObjectId)
 		wg.Done()
 	}(wg)
 
@@ -81,7 +94,7 @@ func ConsumePcoWebhook(c *gin.Context) {
 			actionKey := fmt.Sprintf("%s:%s", mapping.Action.VendorName, mapping.Action.Type)
 			//if function exists run the function
 			if action, ok := actionFuncMap[actionKey]; ok {
-				err = action(c, webhookBody)
+				err := action(c, webhookBody)
 				//handle error
 				if err != nil {
 					log.WithError(err).Errorf("Failed to execute action: %s. From event source: %s:%s", actionKey, mapping.SourceEvent.VendorName, mapping.SourceEvent.Key)

@@ -35,6 +35,5 @@ func BuildRouter(r *gin.Engine) {
 	pcoClientMap = make(map[primitive.ObjectID]*pco.PcoApiClient)
 
 	pco := r.Group("/pco")
-	pco.Use(ValidatePcoWebhook)
-	pco.POST("/:userid", ConsumePcoWebhook)
+	pco.POST("/:userid", ValidatePcoWebhook, ConsumePcoWebhook)
 }
