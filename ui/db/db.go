@@ -27,7 +27,9 @@ type DB struct {
 }
 
 func NewClient(uri string) (*DB, error) {
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
+	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+	opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
+	client, err := mongo.Connect(context.TODO(), opts)
 	if err != nil {
 		return nil, err
 	}
