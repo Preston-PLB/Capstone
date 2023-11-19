@@ -2,25 +2,28 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"net/http"
+	"os"
 
+	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/config"
+	"git.preston-baxter.com/Preston_PLB/capstone/webhook-service/controllers"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	config.Init()
 	r := gin.Default()
-	r.POST("/webhook", func(c *gin.Context) {
-		body, err := io.ReadAll(c.Request.Body)
-		if err != nil {
-			panic(err)
-		}
 
-		fmt.Printf("captured: %s\n", string(body))
+	controllers.BuildRouter(r)
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Run("0.0.0.0:8081") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	var addr string
+	if port := os.Getenv("PORT"); port != "" {
+		addr = fmt.Sprintf("0.0.0.0:%s", port)
+	} else {
+		addr = "0.0.0.0:8008"
+	}
+
+	err := r.Run(addr)
+	if err != nil {
+		panic(err)
+	}
 }
