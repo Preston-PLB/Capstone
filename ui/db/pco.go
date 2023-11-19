@@ -5,6 +5,7 @@ import (
 
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/config"
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db/models"
+	"git.preston-baxter.com/Preston_PLB/capstone/webhook-service/vendors/pco/webhooks"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -32,4 +33,18 @@ func (db *DB) FindPcoSubscriptionForUser(userId primitive.ObjectID, eventName st
 	}
 
 	return subscription, nil
+}
+
+//Okay so learned something here. Interfaces are determined implemented for the type a method is related to.
+//This function is not implemented for DB it is implemented for *DB and that is important
+func (db *DB) SaveSubscriptionsForUser(userId primitive.ObjectID, subscriptions ...webhooks.Subscription) (error) {
+	mods := make([]*models.PcoSubscription, 0, len(subscriptions))
+	for _, sub := range subscriptions {
+		mods = append(mods, &models.PcoSubscription{
+			UserId:       userId,
+			Details:      &sub,
+		})
+	}
+
+	return saveModels(db, mods...)
 }

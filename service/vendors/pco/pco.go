@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db/models"
 	"golang.org/x/oauth2"
 )
 

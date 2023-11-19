@@ -8,10 +8,16 @@ import (
 )
 
 type config struct {
-	Mongo     *MongoConfig             `mapstructure:"mongo"`
-	Vendors   map[string]*VendorConfig `mapstructure:"vendors"`
-	JwtSecret string                   `mapstructure:"jwt_secret"`
-	Env       string                   `mapstructure:"env"`
+	Mongo       *MongoConfig             `mapstructure:"mongo"`
+	Vendors     map[string]*VendorConfig `mapstructure:"vendors"`
+	JwtSecret   string                   `mapstructure:"jwt_secret"`
+	Env         string                   `mapstructure:"env"`
+	AppSettings *AppSettings             `mapstructure:"app_settings"`
+}
+
+type AppSettings struct {
+	WebhookServiceUrl  string `mapstructure:"webhook_service_url"`
+	FrontendServiceUrl string `mapstructure:"frontend_service_url"`
 }
 
 type MongoConfig struct {
