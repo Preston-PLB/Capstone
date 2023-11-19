@@ -7,7 +7,7 @@ type Subscription struct {
 	//attrs
 	Active             bool      `jsonapi:"attr,active,omitempty" bson:"active"`
 	ApplicationId      string    `jsonapi:"attr,application_id,omitempty" bson:"application_id"`
-	AuthenticitySecret bool      `jsonapi:"attr,authenticity_secret,omitempty" bson:"authenticity_secret"`
+	AuthenticitySecret string      `jsonapi:"attr,authenticity_secret,omitempty" bson:"authenticity_secret"`
 	CreatedAt          time.Time `jsonapi:"attr,created_at,omitempty" bson:"created_at"`
 	UpdatedAt          time.Time `jsonapi:"attr,updated_at,omitempty" bson:"updated_at"`
 	Name               string    `jsonapi:"attr,name,omitempty" bson:"name"`
@@ -19,7 +19,7 @@ type WebhookSubscription struct {
 	//attrs
 	Active             bool      `jsonapi:"attr,active,omitempty" bson:"active"`
 	ApplicationId      string    `jsonapi:"attr,application_id,omitempty" bson:"application_id"`
-	AuthenticitySecret bool      `jsonapi:"attr,authenticity_secret,omitempty" bson:"authenticity_secret"`
+	AuthenticitySecret string      `jsonapi:"attr,authenticity_secret,omitempty" bson:"authenticity_secret"`
 	CreatedAt          time.Time `jsonapi:"attr,created_at,omitempty" bson:"created_at"`
 	UpdatedAt          time.Time `jsonapi:"attr,updated_at,omitempty" bson:"updated_at"`
 	Name               string    `jsonapi:"attr,name,omitempty" bson:"name"`
