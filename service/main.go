@@ -19,7 +19,7 @@ func main() {
 	if port := os.Getenv("PORT"); port != "" {
 		addr = fmt.Sprintf("0.0.0.0:%s", port)
 	} else {
-		addr = "0.0.0.0:8008"
+		addr = "0.0.0.0:8080"
 	}
 
 	err := r.Run(addr)

@@ -1,4 +1,4 @@
-from golang:1.21-alpine as builder
+FROM golang:1.21-alpine AS builder
 
 WORKDIR /build/service
 
@@ -12,8 +12,9 @@ COPY ./service .
 
 RUN GOEXPERIMENT=loopvar go build -o main
 
-FROM alpine:latest
+FROM amazonlinux:2023
 
+COPY docker/resolv.conf /etc/resolv.conf
 COPY --from=builder /build/service/main /bin/main
 RUN mkdir -p /etc/capstone
 COPY secrets/config.yaml /etc/capstone

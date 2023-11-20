@@ -3,12 +3,14 @@ package db
 import (
 	"context"
 	"errors"
+	"time"
 
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/config"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 // Interface for any object that wants to take advantage of the DB package
@@ -27,10 +29,13 @@ type DB struct {
 }
 
 func NewClient(uri string) (*DB, error) {
-	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
-	opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
-	client, err := mongo.Connect(context.TODO(), opts)
+	opts := options.Client().ApplyURI(uri).SetConnectTimeout(60 * time.Second)
+	client, err := mongo.Connect(context.Background(), opts)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := client.Ping(context.Background(), readpref.Primary()); err != nil {
 		return nil, err
 	}
 

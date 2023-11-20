@@ -10,7 +10,7 @@ require (
 	github.com/go-playground/assert/v2 v2.2.0
 	github.com/google/jsonapi v1.0.0
 	github.com/sirupsen/logrus v1.9.3
-	go.mongodb.org/mongo-driver v1.12.1
+	go.mongodb.org/mongo-driver v1.13.0
 	golang.org/x/oauth2 v0.14.0
 	google.golang.org/api v0.150.0
 )
@@ -41,6 +41,7 @@ require (
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
+	github.com/miekg/dns v1.1.57 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
@@ -66,10 +67,12 @@ require (
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.15.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
+	golang.org/x/mod v0.12.0 // indirect
 	golang.org/x/net v0.18.0 // indirect
 	golang.org/x/sync v0.5.0 // indirect
 	golang.org/x/sys v0.14.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/tools v0.13.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231030173426-d783a09b4405 // indirect
 	google.golang.org/grpc v1.59.0 // indirect
@@ -81,4 +84,5 @@ require (
 replace git.preston-baxter.com/Preston_PLB/capstone/frontend-service => ../ui
 
 replace golang.org/x/oauth2 => ../libs/oauth2
+
 replace github.com/google/jsonapi => ../libs/jsonapi
