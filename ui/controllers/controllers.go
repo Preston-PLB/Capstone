@@ -22,7 +22,7 @@ func BuildRouter(r *gin.Engine) {
 
 	log = logrus.New()
 	log.SetFormatter(&logrus.TextFormatter{
-		ForceColors: true,
+		DisableColors:             true,
 	})
 
 	r.Use(cors.Default())

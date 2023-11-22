@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -90,7 +91,12 @@ func AddActionFromForm(c *gin.Context) {
 		},
 	}
 
-	mongo.SaveModel(am)
+	err := mongo.SaveModel(am)
+	if err != nil {
+		log.WithError(err).Error("Failed to setup actions")
+		serverError(c, "Failed to setup actions")
+		return
+	}
 
 	c.Redirect(302, "/dashboard")
 }
@@ -110,6 +116,9 @@ func setupPcoSubscriptions(user *models.User) error {
 	//Check if subscriptions already exist
 	webhookMap := make(map[string]webhooks.Subscription)
 	subscriptions, err := pcoApi.GetSubscriptions()
+	if err != nil {
+		return errors.Join(fmt.Errorf("Failed to find subscriptions for user: %s", user.Id), err)
+	}
 	//Loop through found subscriptions
 	for _, sub := range subscriptions {
 		//if subsciption is in the templates look to add it to our map
@@ -137,13 +146,13 @@ func setupPcoSubscriptions(user *models.User) error {
 	//Post Subscriptions
 	subscriptions, err = pcoApi.CreateSubscriptions(builtHooks)
 	if err != nil {
-		return err
+		return errors.Join(fmt.Errorf("Failed to create subscriptions for user: %s", user.Id), err)
 	}
 
 	//Save Subscriptions
 	err = mongo.SaveSubscriptionsForUser(user.Id, subscriptions...)
 	if err != nil {
-		return err
+		return errors.Join(fmt.Errorf("Failed to save subscriptions for user: %s", user.Id), err)
 	}
 
 	return nil
