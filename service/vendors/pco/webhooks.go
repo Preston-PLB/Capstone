@@ -3,6 +3,7 @@ package pco
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"net/http"
 
 	"git.preston-baxter.com/Preston_PLB/capstone/webhook-service/vendors/pco/webhooks"
@@ -23,8 +24,13 @@ func (api *PcoApiClient) GetSubscriptions() ([]webhooks.Subscription, error) {
 		return nil, err
 	}
 
+
 	if resp.StatusCode > 299 || resp.StatusCode < 200 {
-		return nil, fmt.Errorf("Failed to retrieve subscriptions with status code: %d", resp.StatusCode)
+		if raw, err := io.ReadAll(resp.Body); err != nil {
+			return nil, fmt.Errorf("Failed to retrieve subscriptions with status code: %d. Error %s", resp.StatusCode, string(raw))
+		} else {
+			return nil, fmt.Errorf("Failed to retrieve subscriptions with status code: %d", resp.StatusCode)
+		}
 	}
 
 	subscriptions, err := jsonapi.UnmarshalManyPayload[webhooks.Subscription](resp.Body)
@@ -56,7 +62,11 @@ func (api *PcoApiClient) CreateSubscriptions(subscriptions []webhooks.Subscripti
 	}
 
 	if resp.StatusCode > 299 || resp.StatusCode < 200 {
-		return nil, fmt.Errorf("Failed to retrieve plan with status code: %d", resp.StatusCode)
+		if raw, err := io.ReadAll(resp.Body); err != nil {
+			return nil, fmt.Errorf("Failed to retrieve subscriptions with status code: %d. Error %s", resp.StatusCode, string(raw))
+		} else {
+			return nil, fmt.Errorf("Failed to retrieve subscriptions with status code: %d", resp.StatusCode)
+		}
 	}
 
 	new_subscriptions, err := jsonapi.UnmarshalManyPayload[webhooks.Subscription](resp.Body)
@@ -88,7 +98,11 @@ func (api *PcoApiClient) CreateSubscription(subscription *webhooks.Subscription)
 	}
 
 	if resp.StatusCode > 299 || resp.StatusCode < 200 {
-		return fmt.Errorf("Failed to retrieve plan with status code: %d", resp.StatusCode)
+		if raw, err := io.ReadAll(resp.Body); err != nil {
+			return fmt.Errorf("Failed to retrieve subscriptions with status code: %d. Error %s", resp.StatusCode, string(raw))
+		} else {
+			return fmt.Errorf("Failed to retrieve subscriptions with status code: %d", resp.StatusCode)
+		}
 	}
 
 	err = jsonapi.UnmarshalPayload(resp.Body, subscription)
