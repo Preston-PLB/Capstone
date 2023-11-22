@@ -82,3 +82,7 @@ func TestStructs(t *testing.T) {
 
 	assert.Equal(t, test_plan, valid_plan)
 }
+
+func TestMarshalling(t *testing.T) {
+
+}

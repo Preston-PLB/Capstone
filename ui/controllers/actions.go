@@ -30,7 +30,7 @@ var (
 		},
 		"services.v2.events.plan.deleted": {
 			Active: true,
-			Name:   "services.v2.events.plan.deleted",
+			Name:   "services.v2.events.plan.destroyed",
 			Url:    "https://%s/pco/%s",
 		},
 	}
@@ -136,17 +136,19 @@ func setupPcoSubscriptions(user *models.User) error {
 	for _, templ := range webhooksTemplate {
 		if _, ok := webhookMap[templ.Name]; !ok {
 			builtHooks = append(builtHooks, webhooks.Subscription{
-				Active: false,
+				Active: true,
 				Name:   templ.Name,
 				Url:    fmt.Sprintf(templ.Url, conf.AppSettings.WebhookServiceUrl, user.Id.Hex()),
 			})
 		}
 	}
 
-	//Post Subscriptions
-	subscriptions, err = pcoApi.CreateSubscriptions(builtHooks)
-	if err != nil {
-		return errors.Join(fmt.Errorf("Failed to create subscriptions for user: %s", user.Id), err)
+	//Todo: save subscriptions for succesfull hooksetups
+	for index := range builtHooks {
+		err = pcoApi.CreateSubscription(&builtHooks[index])
+		if err != nil {
+			return errors.Join(fmt.Errorf("Failed to create subscription: %s for user: %s", builtHooks[index].Name ,user.Id), err)
+		}
 	}
 
 	//Save Subscriptions

@@ -26,7 +26,7 @@ func (api *PcoApiClient) GetSubscriptions() ([]webhooks.Subscription, error) {
 
 
 	if resp.StatusCode > 299 || resp.StatusCode < 200 {
-		if raw, err := io.ReadAll(resp.Body); err != nil {
+		if raw, err := io.ReadAll(resp.Body); err == nil {
 			return nil, fmt.Errorf("Failed to retrieve subscriptions with status code: %d. Error %s", resp.StatusCode, string(raw))
 		} else {
 			return nil, fmt.Errorf("Failed to retrieve subscriptions with status code: %d", resp.StatusCode)
@@ -55,6 +55,7 @@ func (api *PcoApiClient) CreateSubscriptions(subscriptions []webhooks.Subscripti
 	if err != nil {
 		return nil, err
 	}
+	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := api.Do(req)
 	if err != nil {
@@ -62,10 +63,10 @@ func (api *PcoApiClient) CreateSubscriptions(subscriptions []webhooks.Subscripti
 	}
 
 	if resp.StatusCode > 299 || resp.StatusCode < 200 {
-		if raw, err := io.ReadAll(resp.Body); err != nil {
-			return nil, fmt.Errorf("Failed to retrieve subscriptions with status code: %d. Error %s", resp.StatusCode, string(raw))
+		if raw, err := io.ReadAll(resp.Body); err == nil {
+			return nil, fmt.Errorf("Failed to create subscriptions with status code: %d. Error %s", resp.StatusCode, string(raw))
 		} else {
-			return nil, fmt.Errorf("Failed to retrieve subscriptions with status code: %d", resp.StatusCode)
+			return nil, fmt.Errorf("Failed to create subscriptions with status code: %d", resp.StatusCode)
 		}
 	}
 
@@ -91,6 +92,7 @@ func (api *PcoApiClient) CreateSubscription(subscription *webhooks.Subscription)
 	if err != nil {
 		return err
 	}
+	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := api.Do(req)
 	if err != nil {
@@ -98,10 +100,10 @@ func (api *PcoApiClient) CreateSubscription(subscription *webhooks.Subscription)
 	}
 
 	if resp.StatusCode > 299 || resp.StatusCode < 200 {
-		if raw, err := io.ReadAll(resp.Body); err != nil {
-			return fmt.Errorf("Failed to retrieve subscriptions with status code: %d. Error %s", resp.StatusCode, string(raw))
+		if raw, err := io.ReadAll(resp.Body); err == nil {
+			return fmt.Errorf("Failed to create subscriptions with status code: %d. Error %s", resp.StatusCode, string(raw))
 		} else {
-			return fmt.Errorf("Failed to retrieve subscriptions with status code: %d", resp.StatusCode)
+			return fmt.Errorf("Failed to create subscription with status code: %d", resp.StatusCode)
 		}
 	}
 

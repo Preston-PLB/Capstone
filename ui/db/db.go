@@ -96,7 +96,7 @@ func saveModels[T Model](db *DB, m ...T) error {
 
 	for index, model := range m {
 		entry := mongo.NewUpdateOneModel()
-		entry.SetFilter(bson.M{"_id": model.MongoId})
+		entry.SetFilter(bson.M{"_id": model.MongoId()})
 		entry.SetUpsert(true)
 		entry.SetUpdate(bson.M{"$set": model})
 		model.UpdateObjectInfo()
