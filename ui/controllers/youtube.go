@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -13,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const YOUTUBE_REDIRECT_URI = "https://capstone.preston-baxter.com:8080/vendor/youtube/callback"
+const YOUTUBE_REDIRECT_URI = "https://%s/vendor/youtube/callback"
 
 func InitiateYoutubeOuath(c *gin.Context) {
 	conf := config.Config()
@@ -28,7 +29,7 @@ func InitiateYoutubeOuath(c *gin.Context) {
 	q := init_url.Query()
 	//https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps#httprest_1
 	q.Add("client_id", vendorConfig.ClientId)
-	q.Add("redirect_uri", YOUTUBE_REDIRECT_URI)
+	q.Add("redirect_uri", fmt.Sprintf(YOUTUBE_REDIRECT_URI, conf.AppSettings.FrontendServiceUrl))
 	q.Add("response_type", "code")
 	q.Add("scope", vendorConfig.Scope())
 	q.Add("access_type", "offline")
@@ -79,7 +80,7 @@ func ReceiveYoutubeOauth(c *gin.Context) {
 	q.Add("code", code)
 	q.Add("client_id", vendorConfig.ClientId)
 	q.Add("client_secret", vendorConfig.ClientSecret)
-	q.Add("redirect_uri", YOUTUBE_REDIRECT_URI)
+	q.Add("redirect_uri", fmt.Sprintf(YOUTUBE_REDIRECT_URI, conf.AppSettings.FrontendServiceUrl))
 	q.Add("grant_type", "authorization_code")
 
 	req, err := http.NewRequest("POST", token_url.String(), strings.NewReader(q.Encode()))

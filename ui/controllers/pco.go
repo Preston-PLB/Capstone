@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -13,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const PCO_REDIRECT_URI = "https://capstone.preston-baxter.com:8080/vendor/pco/callback"
+const PCO_REDIRECT_URI = "https://%s/vendor/pco/callback"
 
 func InitiatePCOOuath(c *gin.Context) {
 	conf := config.Config()
@@ -27,7 +28,7 @@ func InitiatePCOOuath(c *gin.Context) {
 
 	q := init_url.Query()
 	q.Add("client_id", vendorConfig.ClientId)
-	q.Add("redirect_uri", PCO_REDIRECT_URI)
+	q.Add("redirect_uri", fmt.Sprintf(PCO_REDIRECT_URI, conf.AppSettings.FrontendServiceUrl))
 	q.Add("response_type", "code")
 	q.Add("scope", vendorConfig.Scope())
 	init_url.RawQuery = q.Encode()
@@ -67,7 +68,7 @@ func RecievePCOOuath(c *gin.Context) {
 	q.Add("code", code)
 	q.Add("client_id", vendorConfig.ClientId)
 	q.Add("client_secret", vendorConfig.ClientSecret)
-	q.Add("redirect_uri", PCO_REDIRECT_URI)
+	q.Add("redirect_uri", fmt.Sprintf(PCO_REDIRECT_URI, conf.AppSettings.FrontendServiceUrl))
 	q.Add("grant_type", "authorization_code")
 
 	req, err := http.NewRequest("POST", token_url.String(), strings.NewReader(q.Encode()))
