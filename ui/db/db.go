@@ -145,7 +145,7 @@ func deleteModels[T Model](db *DB, m ...T) error {
 		return err
 	}
 
-	if res.MatchedCount == 0 && res.ModifiedCount == 0 && res.UpsertedCount == 0 {
+	if res.DeletedCount == 0 {
 		return errors.New("Failed to delete models properly")
 	}
 
