@@ -17,7 +17,8 @@ type EventRecieved struct {
 	Id            primitive.ObjectID `bson:"_id,omitempty"`
 	UserId        primitive.ObjectID `bson:"user_id,omitempty"`     //what user is this associated too
 	VendorName    string             `bson:"vendor_name,omitempty"` //Vendor name of who sent us the event
-	Type          string             `bson:"type,omitempty"`        //type of event
+	VendorId      string             `bson:"vendor_id:omitempty"`
+	Type          string             `bson:"type,omitempty"` //type of event
 }
 
 func (obj *EventRecieved) MongoId() primitive.ObjectID {

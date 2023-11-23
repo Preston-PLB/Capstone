@@ -75,3 +75,5 @@ func (db *DB) FindAuditTrailForUser(userId primitive.ObjectID) ([]models.EventRe
 
 	return events, actions, nil
 }
+
+func (db *DB) FindEventRecievedByVendorId(id string) ([]models.EventRecieved) {return []models.EventRecieved{}}

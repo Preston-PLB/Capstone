@@ -15,5 +15,5 @@ type PlanTime struct {
 	TimeType      string        `jsonapi:"attr,time_type,omitempty"`
 	UpdatedAt     time.Time     `jsonapi:"attr,updated_at,rfc3339,omitempty"`
 	//relations
-	AssignedTeams *[]Team `jsonapi:"relation,assigned_teams,omitempty"`
+	AssignedTeams []Team `jsonapi:"relation,assigned_teams,omitempty"`
 }

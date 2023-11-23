@@ -16,7 +16,7 @@ func InsertBroadcast(service *youtube.Service, title string, startTime time.Time
 	liveBroadcast := &youtube.LiveBroadcast{
 		Snippet: &youtube.LiveBroadcastSnippet{
 			Title:              title,
-			ScheduledStartTime: startTime.Format(time.RFC3339),
+			ScheduledStartTime: startTime.Format(time.RFC3339Nano),
 		},
 		Status: &youtube.LiveBroadcastStatus{
 			PrivacyStatus: privacyStatus,

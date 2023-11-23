@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"regexp"
 	"sync"
-	"time"
 
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/config"
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db/models"
@@ -177,24 +176,19 @@ func youtubeServiceForUser(userId primitive.ObjectID) (*youtube.Service, error) 
 
 func ScheduleBroadcastFromWebhook(c *gin.Context, body *webhooks.EventDelivery) error {
 	//get uid from context. Lots of sanitizing just incase
-	var uid primitive.ObjectID
-	if raw, ok := c.Get("user_bson_id"); ok {
-		uid, ok = raw.(primitive.ObjectID)
-		if !ok {
-			log.Errorf("failed to parse user id to bson object id: %v", raw)
-			return errors.New("Failed to case user id as bson object id")
-		}
-	}
+	uid := userIdFromContext(c)
+
+	//Check if this is a redilivery.
 
 	//Load ytClient for user. It is fetched from cache or created
-	ytClient, err := youtubeServiceForUser(uid)
+	ytClient, err := youtubeServiceForUser(*uid)
 	if err != nil {
 		log.WithError(err).Error("Failed to initialize youtube client")
 		return err
 	}
 
 	//Load pcoClient for user. It is fetched from cache or created
-	pcoClient, err := pcoServiceForUser(uid)
+	pcoClient, err := pcoServiceForUser(*uid)
 	if err != nil {
 		log.WithError(err).Error("Failed to initialize youtube client")
 		return err
@@ -210,8 +204,9 @@ func ScheduleBroadcastFromWebhook(c *gin.Context, body *webhooks.EventDelivery) 
 
 	//Save audit point
 	eventRecievedAudit := &models.EventRecieved{
-		UserId:     uid,
+		UserId:     *uid,
 		VendorName: models.PCO_VENDOR_NAME,
+		VendorId:   body.ID,
 		Type:       body.Name,
 	}
 
@@ -242,12 +237,12 @@ func ScheduleBroadcastFromWebhook(c *gin.Context, body *webhooks.EventDelivery) 
 
 	//build audit trail after action was taken
 	broadcastModel := &models.YoutubeBroadcast{
-		UserId:  uid,
+		UserId:  *uid,
 		Details: broadcast,
 	}
 
 	actionTaken := &models.ActionTaken{
-		UserId:          uid,
+		UserId:          *uid,
 		TriggeringEvent: eventRecievedAudit.MongoId(),
 		Result:          []primitive.ObjectID{broadcastModel.MongoId()},
 		VendorName:      models.YOUTUBE_VENDOR_NAME,
@@ -271,6 +266,12 @@ func scheduleNewBroadcastFromWebhook(c *gin.Context, plan *services.Plan, ytClie
 
 	startTime := times[0].StartsAt
 	// endTime := times[len(times) - 1].EndsAt TODO: this will be used later
+	var title string
+	if plan.Title == "" {
+		title = "Live Stream Scheduled By Capstone"
+	} else {
+		title = plan.Title
+	}
 
-	return yt_helpers.InsertBroadcast(ytClient, plan.Title, startTime, yt_helpers.STATUS_PRIVATE)
+	return yt_helpers.InsertBroadcast(ytClient, title, startTime, yt_helpers.STATUS_PRIVATE)
 }
