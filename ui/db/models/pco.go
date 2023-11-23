@@ -34,29 +34,3 @@ func (obj *PcoSubscription) UpdateObjectInfo() {
 	}
 	obj.UpdatedAt = now
 }
-
-type PcoWebhookSubscription struct {
-	*CommonFields `bson:"obj_info"`
-	Id            primitive.ObjectID     `bson:"_id,omitempty"`
-	UserId        primitive.ObjectID     `bson:"user_id,omitempty"`
-	Details       *webhooks.WebhookSubscription `bson:"details,omitempty"`
-}
-
-func (obj *PcoWebhookSubscription) MongoId() primitive.ObjectID {
-	if obj.Id.IsZero() {
-		now := time.Now()
-		obj.Id = primitive.NewObjectIDFromTimestamp(now)
-	}
-
-	return obj.Id
-}
-
-func (obj *PcoWebhookSubscription) UpdateObjectInfo() {
-	now := time.Now()
-	if obj.CommonFields == nil {
-		obj.CommonFields = new(CommonFields)
-		obj.EntityType = PCO_SUBSCRIPTION_TYPE
-		obj.CreatedAt = now
-	}
-	obj.UpdatedAt = now
-}
