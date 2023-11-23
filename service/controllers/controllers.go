@@ -24,6 +24,7 @@ func BuildRouter(r *gin.Engine) {
 	log.SetFormatter(&logrus.TextFormatter{
 		DisableColors:             true,
 	})
+	log.SetLevel(logrus.DebugLevel)
 
 	var err error
 	mongo, err = db.NewClient(conf.Mongo.Uri)

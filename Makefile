@@ -5,7 +5,7 @@ WEBHOOK_VERSION=$(shell jq -rc ".webhook_version" versions.json)
 deploy: deploy-ui deploy-service deploy-tf
 
 deploy-tf:
-	cd infra; make deploy
+	cd infra; make deploy-yes
 
 deploy-ui: build-ui
 	docker push $(BASE_URL)/frontend-service:latest

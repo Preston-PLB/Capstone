@@ -68,13 +68,16 @@ func ConsumePcoWebhook(c *gin.Context) {
 	errs := make([]error, 2)
 
 	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
 		actionMappings, errs[0] = mongo.FindActionMappingsByUser(*userObjectId)
-		wg.Done()
 	}(wg)
 
 	go func(wg *sync.WaitGroup) {
-		errs[1] = jsonapi.UnmarshalPayload(c.Request.Body, webhookBody)
-		wg.Done()
+		defer wg.Done()
+
+		var payload []webhooks.EventDelivery
+		payload, errs[1] = jsonapi.UnmarshalManyPayload[webhooks.EventDelivery](c.Request.Body)
+		webhookBody = &payload[0]
 	}(wg)
 
 	wg.Wait()
@@ -89,9 +92,9 @@ func ConsumePcoWebhook(c *gin.Context) {
 	//loop through all actions a user has
 	for _, mapping := range actionMappings {
 		//find the ones that are runable by this function
-		if mapping.SourceEvent.VendorName == models.PCO_VENDOR_NAME && eventMatch(webhookBody.Name) {
+		if mapping.SourceEvent.VendorName == models.PCO_VENDOR_NAME && eventMatch(mapping.SourceEvent.Key, webhookBody.Name) {
 			//generate lookup key for function
-			actionKey := fmt.Sprintf("%s:%s", mapping.Action.VendorName, mapping.Action.Type)
+			actionKey := fmt.Sprintf("%s.%s", mapping.Action.VendorName, mapping.Action.Type)
 			//if function exists run the function
 			if action, ok := actionFuncMap[actionKey]; ok {
 				err := action(c, webhookBody)
@@ -99,15 +102,21 @@ func ConsumePcoWebhook(c *gin.Context) {
 				if err != nil {
 					log.WithError(err).Errorf("Failed to execute action: %s. From event source: %s:%s", actionKey, mapping.SourceEvent.VendorName, mapping.SourceEvent.Key)
 					_ = c.AbortWithError(501, err)
+				} else {
+					log.Infof("Succesfully proccessed: %s for %s", webhookBody.Name, userObjectId.Hex())
+					c.Status(200)
 				}
+				return
 			}
 		}
 	}
+	log.Warnf("No errors, but also no work...")
+	c.Status(200)
 }
 
-func eventMatch(event string) bool {
-	if regexString, ok := eventRegexKeys[event]; ok {
-		reg := regexp.MustCompile(regexString)
+func eventMatch(key, event string) bool {
+	if regexString, ok := eventRegexKeys[key]; ok {
+		reg := regexp.MustCompile(regexString) //TODO: Make this regex cache-able
 		return reg.MatchString(event)
 	} else {
 		return false
@@ -204,6 +213,7 @@ func ScheduleBroadcastFromWebhook(c *gin.Context, body *webhooks.EventDelivery) 
 		VendorName: models.PCO_VENDOR_NAME,
 		Type:       body.Name,
 	}
+
 	if err := mongo.SaveModel(eventRecievedAudit); err != nil {
 		log.WithError(err).WithField("EventRecieved", eventRecievedAudit).Error("Failed to save audit event. Logging here and resuming")
 	}
@@ -215,6 +225,16 @@ func ScheduleBroadcastFromWebhook(c *gin.Context, body *webhooks.EventDelivery) 
 	switch body.Name {
 	case "services.v2.events.plan.created":
 		broadcast, err = scheduleNewBroadcastFromWebhook(c, payload, ytClient, pcoClient)
+		if err != nil {
+			log.WithError(err).Error("Failed to schedule broadcast from created event")
+			return err
+		}
+	case "services.v2.events.plan.updated":
+		log.Warn("services.v2.events.plan.updated event not implemented")
+		return nil
+	case "services.v2.events.plan.destroyed":
+		log.Warn("services.v2.events.plan.destroyed event not implemented")
+		return nil
 	default:
 		return fmt.Errorf("Unkown event error: %s", body.Name)
 	}

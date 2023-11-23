@@ -152,7 +152,7 @@ func setupPcoSubscriptions(user *models.User) error {
 	}
 
 	//Save Subscriptions
-	err = mongo.SaveSubscriptionsForUser(user.Id, subscriptions...)
+	err = mongo.SaveSubscriptionsForUser(user.Id, builtHooks...)
 	if err != nil {
 		return errors.Join(fmt.Errorf("Failed to save subscriptions for user: %s", user.Id), err)
 	}

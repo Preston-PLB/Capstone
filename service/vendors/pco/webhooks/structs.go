@@ -17,7 +17,7 @@ type EventDelivery struct {
 	//number of attemts taken to deliver the event
 	Attempt int `jsonapi:"attr,attempt"`
 	//JSON:API string of the event
-	Payload string `jsonapi:"attr,attempt"`
+	Payload string `jsonapi:"attr,payload"`
 	//Owner Organization of the event
 	Organization *services.Organization `jsonapi:"relation,organization"`
 }

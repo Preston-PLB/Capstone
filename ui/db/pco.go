@@ -17,7 +17,7 @@ func (db *DB) FindPcoSubscriptionForUser(userId primitive.ObjectID, eventName st
 	conf := config.Config()
 
 	opts := options.FindOne()
-	res := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).FindOne(context.Background(), bson.M{"_id": userId, "obj_info.ent": models.PCO_SUBSCRIPTION_TYPE, "details.name": eventName}, opts)
+	res := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).FindOne(context.Background(), bson.M{"user_id": userId, "obj_info.ent": models.PCO_SUBSCRIPTION_TYPE, "details.name": eventName}, opts)
 
 	if res.Err() != nil {
 		if res.Err() == mongo.ErrNoDocuments {

@@ -2,10 +2,11 @@ package controllers
 
 import (
 	"bytes"
-	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
+	"fmt"
 	"io"
 
 	"git.preston-baxter.com/Preston_PLB/capstone/webhook-service/vendors/pco/webhooks"
@@ -31,14 +32,16 @@ func ValidatePcoWebhook(c *gin.Context) {
 		return
 	}
 
-	//clone request to harmlessly inspect the body
-	bodyReader := c.Request.Clone(context.Background()).Body
-	body, err := io.ReadAll(bodyReader)
+	//clone request body to harmlessly inspect the body
+	bodyCopy := bytes.NewBuffer([]byte{})
+	_, err = io.Copy(bodyCopy, c.Request.Body)
 	if err != nil {
-		log.WithError(err).Error("Failed to read body while validating PCO webhook")
+		log.WithError(err).Error("Failed to copy body while validating PCO webhook")
 		_ = c.AbortWithError(501, err)
 		return
 	}
+	body := bodyCopy.Bytes()
+	c.Request.Body = io.NopCloser(bytes.NewReader(body))
 
 	//Get secret
 	key, err := getAuthSecret(c, body)
@@ -60,16 +63,25 @@ func ValidatePcoWebhook(c *gin.Context) {
 
 func getAuthSecret(c *gin.Context, body []byte) (string, error) {
 	userObjectId := userIdFromContext(c)
+	log.Debug(string(body))
 
-	event := &webhooks.EventDelivery{}
-	err := jsonapi.UnmarshalPayload(bytes.NewBuffer(body), event)
+	//Pco is weird and sends a data array instead of an object. Yet there is only one event. Fun times
+	event, err := jsonapi.UnmarshalManyPayload[webhooks.EventDelivery](bytes.NewBuffer(body))
 	if err != nil {
-		return "", err
+		return "", errors.Join(fmt.Errorf("Failed to unmarshall event delivery from PCO"), err)
 	}
 
-	webhook, err := mongo.FindPcoSubscriptionForUser(*userObjectId, event.Name)
+	if len(event) == 0 {
+		return "", fmt.Errorf("There are no events in the delivery. Something is wrong")
+	}
+
+	webhook, err := mongo.FindPcoSubscriptionForUser(*userObjectId, event[0].Name)
 	if err != nil {
-		return "", err
+		return "", errors.Join(fmt.Errorf("Failed to find pco subscription for user: %s and event: %s", userObjectId.Hex(), event[0].Name), err)
+	}
+
+	if webhook == nil {
+		return "", fmt.Errorf("Could not find subscription for user: %s and name %s", userObjectId.Hex(), event[0].Name)
 	}
 
 	return webhook.Details.AuthenticitySecret, nil
