@@ -76,6 +76,61 @@ func (db *DB) FindAuditTrailForUser(userId primitive.ObjectID) ([]models.EventRe
 	return events, actions, nil
 }
 
-func (db *DB) FindEventRecievedByVendorId(id string) []models.EventRecieved {
-	return []models.EventRecieved{}
+func (db *DB) FindEventsRecievedByUserId(userId primitive.ObjectID) ([]models.EventRecieved, error) {
+	conf := config.Config()
+	opts := options.Find()
+	res, err := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).Find(context.Background(), bson.M{"user_id": userId, "obj_info.ent": models.EVENT_RECIEVED_TYPE}, opts)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	events := []models.EventRecieved{}
+	err = res.All(context.Background(), &events)
+	if err != nil {
+		return nil, err
+	}
+
+	return events, nil
+}
+
+type VendorEventReport struct {
+	Count int    `bson:"count"`
+	Name  string `bson:"_id"`
+}
+
+func (db *DB) AggregateVendorEventReport(userId primitive.ObjectID) ([]VendorEventReport, error) {
+	conf := config.Config()
+	opts := options.Aggregate().SetAllowDiskUse(false)
+
+	aggregation := bson.A{
+		bson.D{{Key: "$match", Value: bson.D{{Key: "obj_info.ent", Value: "audit_event_recieved"}}}},
+		bson.D{
+			{Key: "$group",
+				Value: bson.D{
+					{Key: "_id", Value: "$vendor_name"},
+					{Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}},
+				},
+			},
+		},
+	}
+
+	res, err := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).Aggregate(context.Background(), aggregation, opts)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	events := []VendorEventReport{}
+	err = res.All(context.Background(), &events)
+	if err != nil {
+		return nil, err
+	}
+
+	return events, nil
 }

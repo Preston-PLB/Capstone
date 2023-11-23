@@ -48,6 +48,9 @@ func BuildRouter(r *gin.Engine) {
 	//Dashboard Forms
 	dashboardForms := dashboard.Group("/forms")
 	dashboardForms.GET("/addAction", GetAddActionForm)
+	//Dashboard Components
+	dashboardComponents := dashboard.Group("/components")
+	dashboardComponents.GET("/metric_card", GetMetricCard)
 
 	//Vendor stuff
 	vendor := r.Group("/vendor")
