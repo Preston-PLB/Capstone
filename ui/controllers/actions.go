@@ -16,8 +16,8 @@ import (
 type actionFunc func(user *models.User) error
 
 var (
-	actionFuncs      map[string]actionFunc            = map[string]actionFunc{"pco.plan": setupPcoSubscriptions}
-	webhooksTemplate map[string]webhooks.Subscription = map[string]webhooks.Subscription{
+	actionFuncs      map[string]actionFunc                   = map[string]actionFunc{"pco.plan": setupPcoSubscriptions}
+	webhooksTemplate map[string]webhooks.WebhookSubscription = map[string]webhooks.WebhookSubscription{
 		"services.v2.events.plan.created": {
 			Active: true,
 			Name:   "services.v2.events.plan.created",
@@ -114,8 +114,8 @@ func setupPcoSubscriptions(user *models.User) error {
 	pcoApi := pco.NewClientWithOauthConfig(conf.Vendors[models.PCO_VENDOR_NAME].OauthConfig(), tokenSource)
 
 	//Check if subscriptions already exist
-	webhookMap := make(map[string]webhooks.Subscription)
-	subscriptions, err := pcoApi.GetSubscriptions()
+	webhookMap := make(map[string]webhooks.WebhookSubscription)
+	subscriptions, err := pcoApi.GetWebhookSubscriptions()
 	if err != nil {
 		return errors.Join(fmt.Errorf("Failed to find subscriptions for user: %s", user.Id), err)
 	}
@@ -131,11 +131,11 @@ func setupPcoSubscriptions(user *models.User) error {
 		}
 	}
 
-	builtHooks := make([]webhooks.Subscription, 0, len(webhooksTemplate))
+	builtHooks := make([]webhooks.WebhookSubscription, 0, len(webhooksTemplate))
 	//Build subscriptions
 	for _, templ := range webhooksTemplate {
 		if _, ok := webhookMap[templ.Name]; !ok {
-			builtHooks = append(builtHooks, webhooks.Subscription{
+			builtHooks = append(builtHooks, webhooks.WebhookSubscription{
 				Active: true,
 				Name:   templ.Name,
 				Url:    fmt.Sprintf(templ.Url, conf.AppSettings.WebhookServiceUrl, user.Id.Hex()),
@@ -145,14 +145,14 @@ func setupPcoSubscriptions(user *models.User) error {
 
 	//Todo: save subscriptions for succesfull hooksetups
 	for index := range builtHooks {
-		err = pcoApi.CreateSubscription(&builtHooks[index])
+		err = pcoApi.CreateWebhookSubscription(&builtHooks[index])
 		if err != nil {
-			return errors.Join(fmt.Errorf("Failed to create subscription: %s for user: %s", builtHooks[index].Name ,user.Id), err)
+			return errors.Join(fmt.Errorf("Failed to create subscription: %s for user: %s", builtHooks[index].Name, user.Id), err)
 		}
 	}
 
 	//Save Subscriptions
-	err = mongo.SaveSubscriptionsForUser(user.Id, builtHooks...)
+	err = mongo.SaveWebhookSubscriptionsForUser(user.Id, builtHooks...)
 	if err != nil {
 		return errors.Join(fmt.Errorf("Failed to save subscriptions for user: %s", user.Id), err)
 	}

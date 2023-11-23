@@ -75,7 +75,7 @@ func getAuthSecret(c *gin.Context, body []byte) (string, error) {
 		return "", fmt.Errorf("There are no events in the delivery. Something is wrong")
 	}
 
-	webhook, err := mongo.FindPcoSubscriptionForUser(*userObjectId, event[0].Name)
+	webhook, err := mongo.FindPcoWebhookSubscriptionForUser(*userObjectId, event[0].Name)
 	if err != nil {
 		return "", errors.Join(fmt.Errorf("Failed to find pco subscription for user: %s and event: %s", userObjectId.Hex(), event[0].Name), err)
 	}
