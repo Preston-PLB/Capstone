@@ -7,7 +7,7 @@ type PlanTime struct {
 	Id string `jsonapi:"primary,PlanTime"`
 	//attributes
 	CreatedAt     time.Time     `jsonapi:"attr,created_at,rfc3339,omitempty"`
-	StartsAt      time.Time     `jsonapi:"attr,live_starts_at,rfc3339,omitempty"`
+	StartsAt      time.Time     `jsonapi:"attr,starts_at,rfc3339,omitempty"`
 	EndsAt        time.Time     `jsonapi:"attr,ends_at,rfc3339,omitempty"`
 	LiveEndsAt    time.Time     `jsonapi:"attr,live_ends_at,rfc3339,omitempty"`
 	LiveStartsAt  time.Time     `jsonapi:"attr,live_starts_at,rfc3339,omitempty"`

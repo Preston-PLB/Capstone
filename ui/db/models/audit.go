@@ -46,7 +46,7 @@ type ActionTaken struct {
 	Id              primitive.ObjectID   `bson:"_id,omitempty"`
 	UserId          primitive.ObjectID   `bson:"user_id,omitempty"`          //what user is this associated too
 	TriggeringEvent primitive.ObjectID   `bson:"triggering_event,omitempty"` //what triggered this action to be taken
-	Result          []primitive.ObjectID `bson:"result,omitempty"`           //list of entities effected or created from action
+	Result          string `bson:"result,omitempty"`           //list of entities effected or created from action
 	VendorName      string               `bson:"vendor_name,omitempty"`      //Vendor name that the action was taken against
 }
 

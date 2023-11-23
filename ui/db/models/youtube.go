@@ -13,6 +13,7 @@ type YoutubeBroadcast struct {
 	*CommonFields `bson:"obj_info"`
 	Id            primitive.ObjectID     `bson:"_id,omitempty"`
 	UserId        primitive.ObjectID     `bson:"user_id,omitempty"`
+	CorrelationId string                 `bson:"correlation_id,omitempty"`
 	Details       *youtube.LiveBroadcast `bson:"details,omitempty"`
 }
 

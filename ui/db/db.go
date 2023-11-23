@@ -88,6 +88,10 @@ func (db *DB) SaveModels(m ...Model) error {
 	return nil
 }
 
+func SaveModelSlice[T Model](db *DB, m ...T) error {
+	return saveModels[T](db, m...)
+}
+
 // For allowing more varidaic like things
 func saveModels[T Model](db *DB, m ...T) error {
 	conf := config.Config()
@@ -112,6 +116,37 @@ func saveModels[T Model](db *DB, m ...T) error {
 
 	if res.MatchedCount == 0 && res.ModifiedCount == 0 && res.UpsertedCount == 0 {
 		return errors.New("Failed to save models properly")
+	}
+
+	return nil
+}
+
+func DeleteModelSlice[T Model](db *DB, m ...T) error {
+	return deleteModels[T](db, m...)
+}
+
+// For allowing more varidaic like things
+func deleteModels[T Model](db *DB, m ...T) error {
+	conf := config.Config()
+
+	writeEntry := make([]mongo.WriteModel, len(m))
+
+	for index, model := range m {
+		entry := mongo.NewDeleteOneModel()
+		entry.SetFilter(bson.M{"_id": model.MongoId()})
+		model.UpdateObjectInfo()
+
+		writeEntry[index] = entry
+	}
+
+	opts := options.BulkWrite()
+	res, err := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).BulkWrite(context.Background(), writeEntry, opts)
+	if err != nil {
+		return err
+	}
+
+	if res.MatchedCount == 0 && res.ModifiedCount == 0 && res.UpsertedCount == 0 {
+		return errors.New("Failed to delete models properly")
 	}
 
 	return nil
