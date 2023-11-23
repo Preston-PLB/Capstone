@@ -28,7 +28,7 @@ func BuildRouter(r *gin.Engine) {
 
 	r.Use(cors.Default())
 
-	r.Static("/static", "./dist")
+	r.Static("/static", "/var/capstone/dist")
 	//mainpage
 	r.GET("/", AuthMiddleware(false), LandingPage)
 

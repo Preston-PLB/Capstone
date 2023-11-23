@@ -31,7 +31,8 @@ RUN npx tailwindcss -i static/index.css -o dist/output.css
 FROM amazonlinux:2023
 
 COPY docker/resolv.conf /etc/resolv.conf
-COPY --from=node-builder /build/dist /bin/dist
+RUN mkdir -p /var/capstone
+COPY --from=node-builder /build/dist /var/capstone/dist
 COPY --from=builder /build/ui/main /bin/main
 RUN mkdir -p /etc/capstone
 COPY secrets/config.yaml /etc/capstone
