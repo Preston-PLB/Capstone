@@ -24,7 +24,6 @@ func (api *PcoApiClient) GetSubscriptions() ([]webhooks.Subscription, error) {
 		return nil, err
 	}
 
-
 	if resp.StatusCode > 299 || resp.StatusCode < 200 {
 		if raw, err := io.ReadAll(resp.Body); err == nil {
 			return nil, fmt.Errorf("Failed to retrieve subscriptions with status code: %d. Error %s", resp.StatusCode, string(raw))

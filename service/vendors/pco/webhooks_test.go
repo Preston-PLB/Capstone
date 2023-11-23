@@ -23,7 +23,7 @@ var pcoMockAccount models.VendorAccount = models.VendorAccount{
 		TokenType:    "bearer",
 		RefreshToken: "asdfas;lkdjfas;dlkfj;asdlkj;aslf",
 	},
-	Name:             "pco",
+	Name: "pco",
 }
 
 func TestCreateSubscriptions(t *testing.T) {
@@ -59,14 +59,14 @@ func TestCreateSubscriptions(t *testing.T) {
 
 	mockSubscriptoins := []webhooks.Subscription{
 		{
-			Active:             true,
-			Name:               "eventsandstuff",
-			Url:                "https://thing.com/asdf/asdf/asdf",
+			Active: true,
+			Name:   "eventsandstuff",
+			Url:    "https://thing.com/asdf/asdf/asdf",
 		},
 		{
-			Active:             true,
-			Name:               "eventsandstuff",
-			Url:                "https://thing.com/asdf/asdf/asdf",
+			Active: true,
+			Name:   "eventsandstuff",
+			Url:    "https://thing.com/asdf/asdf/asdf",
 		},
 	}
 
@@ -74,6 +74,5 @@ func TestCreateSubscriptions(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
 
 }

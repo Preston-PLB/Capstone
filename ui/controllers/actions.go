@@ -147,7 +147,7 @@ func setupPcoSubscriptions(user *models.User) error {
 	for index := range builtHooks {
 		err = pcoApi.CreateSubscription(&builtHooks[index])
 		if err != nil {
-			return errors.Join(fmt.Errorf("Failed to create subscription: %s for user: %s", builtHooks[index].Name ,user.Id), err)
+			return errors.Join(fmt.Errorf("Failed to create subscription: %s for user: %s", builtHooks[index].Name, user.Id), err)
 		}
 	}
 

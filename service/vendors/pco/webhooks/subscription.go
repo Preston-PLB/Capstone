@@ -6,7 +6,7 @@ type Subscription struct {
 	Id string `jsonapi:"primary,Subscription" bson:"id"`
 	//attrs
 	Active             bool      `jsonapi:"attr,active,omitempty" bson:"active"`
-	ApplicationId      int    `jsonapi:"attr,application_id,omitempty" bson:"application_id"`
+	ApplicationId      int       `jsonapi:"attr,application_id,omitempty" bson:"application_id"`
 	AuthenticitySecret string    `jsonapi:"attr,authenticity_secret,omitempty" bson:"authenticity_secret"`
 	CreatedAt          time.Time `jsonapi:"attr,created_at,rfc3339,omitempty" bson:"created_at"`
 	UpdatedAt          time.Time `jsonapi:"attr,updated_at,rfc3339,omitempty" bson:"updated_at"`

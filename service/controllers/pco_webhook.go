@@ -195,7 +195,7 @@ func youtubeServiceForUser(userId primitive.ObjectID) (*youtube.Service, error) 
 	}
 }
 
-//TODO: Revisit the structure of this function
+// TODO: Revisit the structure of this function
 func ScheduleBroadcastFromWebhook(c *gin.Context, body *webhooks.EventDelivery) error {
 	//get uid from context. Lots of sanitizing just incase
 	uid := userIdFromContext(c)
@@ -278,7 +278,7 @@ func ScheduleBroadcastFromWebhook(c *gin.Context, body *webhooks.EventDelivery) 
 		}
 
 		//save audit trail
-		err = mongo.SaveModels( actionTaken)
+		err = mongo.SaveModels(actionTaken)
 		if err != nil {
 			log.WithError(err).Error("Failed to save broadcastModel and actionTaken")
 			return err
