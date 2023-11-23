@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"regexp"
 	"sync"
+	"time"
 
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/config"
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db/models"
@@ -268,5 +269,8 @@ func scheduleNewBroadcastFromWebhook(c *gin.Context, plan *services.Plan, ytClie
 		return nil, err
 	}
 
-	return yt_helpers.InsertBroadcast(ytClient, plan.Title, times.StartsAt, yt_helpers.STATUS_PRIVATE)
+	startTime := times[0].StartsAt
+	// endTime := times[len(times) - 1].EndsAt TODO: this will be used later
+
+	return yt_helpers.InsertBroadcast(ytClient, plan.Title, startTime, yt_helpers.STATUS_PRIVATE)
 }

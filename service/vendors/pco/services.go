@@ -34,7 +34,7 @@ func (api *PcoApiClient) GetPlan(service_type_id, plan_id string) (*services.Pla
 	return plan, nil
 }
 
-func (api *PcoApiClient) GetPlanTimes(service_type_id, plan_id string) (*services.PlanTime, error) {
+func (api *PcoApiClient) GetPlanTimes(service_type_id, plan_id string) ([]services.PlanTime, error) {
 	api.Url().Path = fmt.Sprintf("/services/v2/service_types/%s/plans/%s/plan_times", service_type_id, plan_id)
 
 	req, err := http.NewRequest(http.MethodGet, api.Url().String(), nil)
@@ -51,11 +51,10 @@ func (api *PcoApiClient) GetPlanTimes(service_type_id, plan_id string) (*service
 		return nil, fmt.Errorf("Failed to retrieve plan with status code: %d", resp.StatusCode)
 	}
 
-	planTime := &services.PlanTime{}
-	err = jsonapi.UnmarshalPayload(resp.Body, planTime)
+	planTimes, err := jsonapi.UnmarshalManyPayload[services.PlanTime](resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return planTime, nil
+	return planTimes, nil
 }
