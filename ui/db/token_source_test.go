@@ -50,7 +50,7 @@ func TestRefreshToken(t *testing.T) {
 	conf.Vendors["test"].AuthUri = fmt.Sprintf("%s/auth", ts.URL)
 	conf.Vendors["test"].TokenUri = fmt.Sprintf("%s/auth", ts.URL)
 	//tkr := conf.TokenSource(context.Background(), &oauth2.Token{RefreshToken: "OLD_REFRESH_TOKEN"})
-	id, err := primitive.ObjectIDFromHex("65517e864ac7a12f63fdae33")
+	id, err := primitive.ObjectIDFromHex("6560ecc57567b3806c5dbaf3")
 	if err != nil {
 		t.Fatal(err)
 	}
