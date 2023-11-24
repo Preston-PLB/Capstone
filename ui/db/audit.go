@@ -28,7 +28,7 @@ func (db *DB) FindAuditTrailForUser(userId primitive.ObjectID) ([]models.EventRe
 	//Spawn event recieved goroutine
 	go func(wg *sync.WaitGroup) {
 		defer wg.Done()
-		opts := options.Find()
+		opts := options.Find().SetSort(bson.M{"obj_info.created_at": -1})
 		res, err := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).Find(context.Background(), bson.M{"user_id": userId, "obj_info.ent": models.EVENT_RECIEVED_TYPE}, opts)
 		if err != nil {
 			if err == mongo.ErrNoDocuments {
@@ -48,7 +48,7 @@ func (db *DB) FindAuditTrailForUser(userId primitive.ObjectID) ([]models.EventRe
 	//Spawn action taken goroutine
 	go func(wg *sync.WaitGroup) {
 		defer wg.Done()
-		opts := options.Find()
+		opts := options.Find().SetSort(bson.M{"obj_info.created_at": -1})
 		res, err := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).Find(context.Background(), bson.M{"user_id": userId, "obj_info.ent": models.ACTION_MAPPING_TYPE}, opts)
 		if err != nil {
 			if err == mongo.ErrNoDocuments {
@@ -78,7 +78,7 @@ func (db *DB) FindAuditTrailForUser(userId primitive.ObjectID) ([]models.EventRe
 
 func (db *DB) FindEventsRecievedByUserId(userId primitive.ObjectID) ([]models.EventRecieved, error) {
 	conf := config.Config()
-	opts := options.Find()
+	opts := options.Find().SetSort(bson.M{"obj_info.created_at": -1})
 	res, err := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).Find(context.Background(), bson.M{"user_id": userId, "obj_info.ent": models.EVENT_RECIEVED_TYPE}, opts)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -98,7 +98,7 @@ func (db *DB) FindEventsRecievedByUserId(userId primitive.ObjectID) ([]models.Ev
 
 func (db *DB) FindActionTakenByUserId(userId primitive.ObjectID) ([]models.ActionTaken, error) {
 	conf := config.Config()
-	opts := options.Find()
+	opts := options.Find().SetSort(bson.M{"obj_info.created_at": -1})
 	res, err := db.client.Database(conf.Mongo.EntDb).Collection(conf.Mongo.EntCol).Find(context.Background(), bson.M{"user_id": userId, "obj_info.ent": models.ACTION_TAKEN_TYPE}, opts)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
