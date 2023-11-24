@@ -93,7 +93,6 @@ func actionsForUserTableData(c *gin.Context) templates.TableData {
 		return defaultTableData(c)
 	}
 
-
 	//check for filter
 	filter, filter_exists := c.GetQuery("filter")
 	index := 1

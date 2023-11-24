@@ -18,8 +18,8 @@ type EventRecieved struct {
 	UserId        primitive.ObjectID `bson:"user_id,omitempty"`     //what user is this associated too
 	VendorName    string             `bson:"vendor_name,omitempty"` //Vendor name of who sent us the event
 	VendorId      string             `bson:"vendor_id,omitempty"`
-	CorrelationId   string             `bson:"correlation_id,omitempty"`           //list of entities effected or created from action
-	Type          string             `bson:"type,omitempty"` //type of event
+	CorrelationId string             `bson:"correlation_id,omitempty"` //list of entities effected or created from action
+	Type          string             `bson:"type,omitempty"`           //type of event
 }
 
 func (obj *EventRecieved) MongoId() primitive.ObjectID {
@@ -48,7 +48,7 @@ type ActionTaken struct {
 	UserId          primitive.ObjectID `bson:"user_id,omitempty"`          //what user is this associated too
 	TriggeringEvent primitive.ObjectID `bson:"triggering_event,omitempty"` //what triggered this action to be taken
 	Result          string             `bson:"result,omitempty"`           //list of entities effected or created from action
-	CorrelationId   string             `bson:"correlation_id,omitempty"`           //list of entities effected or created from action
+	CorrelationId   string             `bson:"correlation_id,omitempty"`   //list of entities effected or created from action
 	VendorName      string             `bson:"vendor_name,omitempty"`      //Vendor name that the action was taken against
 }
 
