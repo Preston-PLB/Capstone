@@ -33,7 +33,7 @@ func (ts *VendorTokenSource) Token() (*oauth2.Token, error) {
 	//Define lock
 	token_lock := &models.TokenLock{
 		VendorId:  ts.vendor.MongoId(),
-		TokenId:   ts.vendor.OauthCredentials.RefreshToken,
+		TokenId:   ts.vendor.OauthCredentials.AccessToken,
 		Refreshed: false,
 	}
 	//Don't forget to create the mongo id
@@ -72,7 +72,7 @@ func (ts *VendorTokenSource) Token() (*oauth2.Token, error) {
 	}
 
 	//update vendor
-	ts.vendor.OauthCredentials.RefreshToken = token.RefreshToken
+	ts.vendor.OauthCredentials.AccessToken = token.AccessToken
 
 	//save vendor
 	err = ts.db.SaveModel(ts.vendor)
