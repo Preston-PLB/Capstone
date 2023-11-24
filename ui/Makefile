@@ -2,7 +2,7 @@ BASE_URL="us-central1-docker.pkg.dev/pbaxter-infra/capstone-repo"
 
 local-build:
 	rm -f templates/*.go; templ generate -path ./templates
-	npx tailwindcss -i static/index.css -o dist/output.css
+	npx tailwindcss -i tailwind/index.css -o dist/output.css
 	GOEXPERIMENT=loopvar go build -o ./tmp/main .
 
 local-run: local-build

@@ -126,7 +126,7 @@ func (db *DB) AggregateBroadcastReport(userId primitive.ObjectID) ([]VendorEvent
 	opts := options.Aggregate().SetAllowDiskUse(false)
 
 	aggregation := bson.A{
-		bson.D{{Key: "$match", Value: bson.D{{Key: "obj_info.ent", Value: models.ACTION_TAKEN_TYPE}, {Key: "result", Value: "Updated Broadcast"}}}},
+		bson.D{{Key: "$match", Value: bson.D{{Key: "obj_info.ent", Value: models.ACTION_TAKEN_TYPE}, {Key: "result", Value: "Created Broadcast"}}}},
 		bson.D{
 			{Key: "$group",
 				Value: bson.D{

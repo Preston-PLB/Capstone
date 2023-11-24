@@ -25,13 +25,14 @@ WORKDIR /build
 COPY ui/ .
 
 RUN npm install
-RUN npx tailwindcss -i static/index.css -o dist/output.css
+RUN npx tailwindcss -i tailwind/index.css -o dist/output.css
 
 #Final Contianer
 FROM amazonlinux:2023
 
 COPY docker/resolv.conf /etc/resolv.conf
 RUN mkdir -p /var/capstone
+COPY ui/static/ /var/capstone/dist
 COPY --from=node-builder /build/dist /var/capstone/dist
 COPY --from=builder /build/ui/main /bin/main
 RUN mkdir -p /etc/capstone
