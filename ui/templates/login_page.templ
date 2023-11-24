@@ -4,11 +4,11 @@ templ LoginPage(errorMsg string) {
 	<!DOCTYPE html>
 	<html>
 		@Head("Log in")
-		<body class="text-gray-800 antialiased">
+		<body class="text-gray-800 antialiased h-full overflow-hidden">
 			@Nav(nil)
 			@LoginContent(false, errorMsg)
 		</body>
-		@Footer()
+		@LoginFooter()
 		@toggleNavBar()
 	</html>
 }
@@ -17,11 +17,11 @@ templ SignupPage(errorMsg string) {
 	<!DOCTYPE html>
 	<html>
 		@Head("Sign up")
-		<body class="text-gray-800 antialiased">
+		<body class="text-gray-800 antialiased h-full overflow-hidden">
 			@Nav(nil)
 			@LoginContent(true, errorMsg)
 		</body>
-		@Footer()
+		@LoginFooter()
 		@toggleNavBar()
 	</html>
 }

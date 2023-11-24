@@ -319,6 +319,7 @@ func ScheduleBroadcastFromWebhook(c *gin.Context, body *webhooks.EventDelivery) 
 			UserId:          *uid,
 			TriggeringEvent: eventRecievedAudit.MongoId(),
 			Result:          result,
+			CorrelationId:   payload.Id,
 			VendorName:      models.YOUTUBE_VENDOR_NAME,
 		}
 

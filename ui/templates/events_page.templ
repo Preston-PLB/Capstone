@@ -1,0 +1,180 @@
+package templates
+
+import (
+	"fmt"
+
+	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/db/models"
+)
+
+type TableData [][]string
+
+templ EventsPage(user *models.User) {
+	<!DOCTYPE html>
+	<html>
+		@Head("Events")
+		<body class="text-blueGray-700 antialiased">
+			<div
+ 				id="add-action-modal"
+ 				aria-hidden="false"
+ 				tabindex="-1"
+ 				class="transition-all hidden"
+			></div>
+			<div id="root" class="h-screen overflow-scroll">
+				@DashboardNav(user)
+				@EventContent(user)
+			</div>
+			@DashboardFooter()
+		</body>
+		@DashboardScript()
+		@toggleDropdown()
+		@updateSearchScript()
+	</html>
+}
+
+var sampleData = [][]string{{"head 1", "head 2"}, {"row 1", "row 1"}, {"row 2", "row 2"}}
+var blankData = [][]string{{"head 1", "head 2"}}
+
+templ EventContent(user *models.User) {
+	<noscript>You need to enable JavaScript to run this app.</noscript>
+	<div class="relative md:ml-64 bg-blueGray-50">
+		@DashboardContentNav(user)
+		<!-- Header -->
+		<div class="relative bg-blue-600 md:pt-32 pb-32 pt-12">
+			<div class="px-4 md:px-10 mx-auto w-1/4 h-3/4"></div>
+			<div class="px-4 md:px-10 mx-auto w-2/4 h-3/4">
+				<div class="relative flex flex-col min-w-0 break-words bg-white rounded mb-6 xl:mb-0 shadow-lg">
+					<div class="flex-auto p-4">
+						<div
+ 							class="flex-row flex-wrap items-center lg:ml-auto mr-3"
+						>
+							<div class="relative flex w-full flex-wrap items-stretch">
+								<span
+ 									class="z-10 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3"
+								><i class="fas fa-search"></i></span>
+								<input
+ 									id="search_bar"
+ 									type="text"
+									onkeyup="onSearchKeyUp()"
+ 									placeholder="Search here..."
+ 									class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="px-4 md:px-10 mx-auto w-1/4 h-3/4"></div>
+		</div>
+		<div class="px-4 md:px-10 mx-auto w-full -m-24">
+			<div class="flex flex-wrap">
+				<div class="w-full xl:w-6/12 mb-12 xl:mb-0 px-4">
+					@EventTableWidget("Events", "events_for_user")
+				</div>
+				<div class="w-full xl:w-6/12 mb-12 xl:mb-0 px-4">
+					@EventTableWidget("Actions", "actions_for_user")
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ EventTableWidget(title, table_name string) {
+	<div class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded">
+		<div class="rounded-t mb-0 px-4 py-3 border-0">
+			<div class="flex flex-wrap items-center">
+				<div class="relative w-full px-4 max-w-full flex-grow flex-1">
+					<h3 class="font-semibold text-base text-blueGray-700">
+						{ title }
+					</h3>
+				</div>
+			</div>
+		</div>
+		<div class="block w-full overflow-x-auto">
+			<!-- Projects table -->
+			@EventTableDataLoader(table_name)
+		</div>
+	</div>
+}
+
+templ EventTableDataLoader(table_name string) {
+	<div class="relative" hx-get={ fmt.Sprintf("/dashboard/events/components/table_data?table_name=%s", table_name) } hx-swap="outerHTML" hx-trigger="load">
+		@EventTableDataLazy(table_name)
+		@spinnerCentered()
+	</div>
+}
+
+//hx-get={ fmt.Sprintf("/dashboard/events/components/table_data?table_name=%s", table_name) }
+
+templ EventTableDataLazy(table_name string) {
+	<table class="items-center opacity-50 w-full bg-transparent border-collapse">
+		<thead>
+			<tr>
+				<th class="px-6 bg-blueGray-50 opacity-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+					Lorem Ipsum
+				</th>
+				<th class="px-6 bg-blueGray-50 opacity-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+					Lorem Ipsum
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th class="border-t-0 px-6 align-middle opacity-50 border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
+					No Data Available
+				</th>
+				<th class="border-t-0 px-6 align-middle opacity-50 border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
+					No Data Available
+				</th>
+			</tr>
+		</tbody>
+	</table>
+}
+
+templ EventTableData(data TableData, table_name string) {
+	<table class="items-center w-full bg-transparent border-collapse" hx-get={ fmt.Sprintf("/dashboard/events/components/table_data?table_name=%s", table_name) } hx-params="*" hx-trigger="search delay:200ms from:body">
+		<thead>
+			<tr>
+				for _, header := range data[0] {
+					<th class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+						{ header }
+					</th>
+				}
+			</tr>
+		</thead>
+		<tbody>
+			if len(data) <= 1 {
+				<tr>
+					<th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
+						No Data Available
+					</th>
+				</tr>
+			} else {
+				for _, row := range data[1:] {
+					<tr>
+						for _, item := range row {
+							<th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
+								{ item }
+							</th>
+						}
+					</tr>
+				}
+			}
+		</tbody>
+	</table>
+}
+
+templ updateSearchScript() {
+	<script>
+	const searchEvent = new Event("search");
+
+	function onSearchKeyUp() {
+		console.log("keyup")
+		document.body.dispatchEvent(searchEvent);
+	}
+
+	document.body.addEventListener('htmx:configRequest', function(evt) {
+		var query = document.getElementById("search_bar").value;
+		evt.detail.parameters['filter'] = query // add a new parameter into the request
+	});
+	</script>
+}

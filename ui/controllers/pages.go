@@ -70,3 +70,15 @@ func DashboardPage(c *gin.Context) {
 
 	renderTempl(c, templates.DashboardPage(user, vendors, actions))
 }
+
+func EventsPage(c *gin.Context) {
+	user := getUserFromContext(c)
+
+	if user == nil {
+		log.Error("No user found in context")
+		serverError(c, "No user found in context")
+		return
+	}
+
+	renderTempl(c, templates.EventsPage(user))
+}

@@ -10,6 +10,7 @@ templ Head(msg string) {
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 		<meta name="theme-color" content="#000000"/>
 		<meta name="view-transition" content="same-origin"/>
+		<meta name="htmx-config" content='{"globalViewTransistions": true}'/>
 		<link rel="shortcut icon" href="./assets/img/favicon.ico"/>
 		<link
  			rel="apple-touch-icon"
@@ -41,7 +42,7 @@ templ LandingPage(user *models.User) {
 			@Nav(user)
 			@LandingContent()
 		</body>
-		@Footer()
+		@LandingFooter()
 		@toggleNavBar()
 	</html>
 }

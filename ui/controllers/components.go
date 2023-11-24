@@ -87,18 +87,36 @@ func eventsRecievedMetricFunction(c *gin.Context) *DashboardMetric {
 		if events[biggestVendor].Count < event.Count {
 			biggestVendor = index
 		}
-
 	}
 
 	p := message.NewPrinter(language.English)
 	return &DashboardMetric{
 		Title:          "Events Recieved",
 		PrimaryValue:   p.Sprintf("%d", totalEvents),
-		SecondaryValue: p.Sprintf("Most events came from: %s", events[biggestVendor].Name),
-		Subtitle:       "thats a lot of events",
+		SecondaryValue: "",
+		Subtitle:       p.Sprintf("Most events came from: %s", events[biggestVendor].Name),
 	}
 }
 
 func streamsScheduledMetricFunction(c *gin.Context) *DashboardMetric {
-	return defaultMetricFunction(c)
+	user := getUserFromContext(c)
+
+	events, err := mongo.AggregateBroadcastReport(user.Id)
+	if err != nil {
+		log.WithError(err).Errorf("Failed to find broadcast report for user: %s", user.Id.Hex())
+		return defaultMetricFunction(c)
+	}
+
+	totalEvents := 0
+	for _, event := range events {
+		totalEvents += event.Count
+	}
+
+	p := message.NewPrinter(language.English)
+	return &DashboardMetric{
+		Title:          "Broadcasts scheduled",
+		PrimaryValue:   p.Sprintf("%d", totalEvents),
+		SecondaryValue: "",
+		Subtitle:       "Scheduled to youtube",
+	}
 }

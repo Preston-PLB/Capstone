@@ -28,7 +28,7 @@ func BuildRouter(r *gin.Engine) {
 
 	r.Use(cors.Default())
 
-	r.Static("/static", "/var/capstone/dist")
+	r.Static("/static", "./dist")
 	//mainpage
 	r.GET("/", AuthMiddleware(false), LandingPage)
 
@@ -51,6 +51,11 @@ func BuildRouter(r *gin.Engine) {
 	//Dashboard Components
 	dashboardComponents := dashboard.Group("/components")
 	dashboardComponents.GET("/metric_card", GetMetricCard)
+	//Dashboard Events
+	dashboardEvents := dashboard.Group("/events")
+	dashboardEvents.GET("", EventsPage)
+	dashboardEventComponents := dashboardEvents.Group("/components")
+	dashboardEventComponents.GET("/table_data", GetTableComponent)
 
 	//Vendor stuff
 	vendor := r.Group("/vendor")
