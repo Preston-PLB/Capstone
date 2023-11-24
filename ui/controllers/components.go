@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"fmt"
+
 	"git.preston-baxter.com/Preston_PLB/capstone/frontend-service/templates"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/text/language"
@@ -90,12 +92,15 @@ func eventsRecievedMetricFunction(c *gin.Context) *DashboardMetric {
 	}
 
 	p := message.NewPrinter(language.English)
-	return &DashboardMetric{
-		Title:          "Events Recieved",
-		PrimaryValue:   p.Sprintf("%d", totalEvents),
-		SecondaryValue: "",
-		Subtitle:       p.Sprintf("Most events came from: %s", events[biggestVendor].Name),
+	metric := &DashboardMetric{
+		Title:        "Events Recieved",
+		PrimaryValue: p.Sprintf("%d", totalEvents),
 	}
+	if len(events) > 0 {
+		metric.Subtitle = fmt.Sprintf("Most events from: %s", events[biggestVendor].Name)
+	}
+
+	return metric
 }
 
 func streamsScheduledMetricFunction(c *gin.Context) *DashboardMetric {

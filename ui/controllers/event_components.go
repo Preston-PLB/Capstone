@@ -60,7 +60,7 @@ func eventsForUserTableData(c *gin.Context) templates.TableData {
 	table := make([][]string, len(events)+1)
 	index := 1
 	for _, event := range events {
-		arr := []string{event.CreatedAt.Format(time.Stamp), strings.ToUpper(event.VendorName), event.VendorId, event.Type}
+		arr := []string{event.CreatedAt.Format(time.Stamp), strings.ToUpper(event.VendorName), event.CorrelationId, event.Type}
 
 		if filter_exists {
 			//if the filter exists loop through the row. Check if anything meets the filter
@@ -77,8 +77,8 @@ func eventsForUserTableData(c *gin.Context) templates.TableData {
 		//We either had no filter or passed the filter check. Add to the pool
 		table[index] = arr
 		index += 1
-		table[0] = []string{"Timestamp", "Vendor", "Id", "Event Type"}
 	}
+	table[0] = []string{"Timestamp", "Vendor", "Id", "Event Type"}
 
 	return table[0:index]
 }
@@ -99,7 +99,7 @@ func actionsForUserTableData(c *gin.Context) templates.TableData {
 	index := 1
 	table := make([][]string, len(actions)+1)
 	for _, action := range actions {
-		arr := []string{action.CreatedAt.Format(time.RFC1123), action.VendorName, action.CorrelationId, action.Result}
+		arr := []string{action.CreatedAt.Format(time.Stamp), action.VendorName, action.CorrelationId, action.Result}
 		if filter_exists {
 			//if the filter exists loop through the row. Check if anything meets the filter
 			pass := false
@@ -112,7 +112,7 @@ func actionsForUserTableData(c *gin.Context) templates.TableData {
 				continue
 			}
 		}
-		table[index] = []string{action.CreatedAt.Format(time.RFC1123), action.VendorName, action.CorrelationId, action.Result}
+		table[index] = arr
 		index += 1
 	}
 	table[0] = []string{"Timestamp", "Vendor", "Id", "Result"}

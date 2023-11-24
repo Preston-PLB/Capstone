@@ -132,5 +132,21 @@ func (ts *VendorTokenSource) waitForToken(tl *models.TokenLock) error {
 		}
 
 	}
+
+	//We waited to long check if its refreshed and carry on
+	res :=col.FindOne(context.Background(), bson.M{"token_id": tl.TokenId})
+	if res.Err() != nil {
+		return errors.Join(TokenWaitExpired, res.Err())
+	}
+
+	err = res.Decode(tl)
+	if err != nil {
+		return errors.Join(TokenWaitExpired, res.Err())
+	}
+
+	if tl.Refreshed {
+		return nil
+	}
+
 	return TokenWaitExpired
 }

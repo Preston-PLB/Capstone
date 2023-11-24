@@ -226,10 +226,11 @@ func ScheduleBroadcastFromWebhook(c *gin.Context, body *webhooks.EventDelivery) 
 
 	//Save audit point
 	eventRecievedAudit := &models.EventRecieved{
-		UserId:     *uid,
-		VendorName: models.PCO_VENDOR_NAME,
-		VendorId:   body.ID,
-		Type:       body.Name,
+		UserId:        *uid,
+		VendorName:    models.PCO_VENDOR_NAME,
+		VendorId:      body.ID,
+		CorrelationId: payload.Id,
+		Type:          body.Name,
 	}
 
 	if err := mongo.SaveModel(eventRecievedAudit); err != nil {
@@ -274,6 +275,7 @@ func ScheduleBroadcastFromWebhook(c *gin.Context, body *webhooks.EventDelivery) 
 			UserId:          *uid,
 			TriggeringEvent: eventRecievedAudit.MongoId(),
 			Result:          result,
+			CorrelationId:   payload.Id,
 			VendorName:      models.YOUTUBE_VENDOR_NAME,
 		}
 

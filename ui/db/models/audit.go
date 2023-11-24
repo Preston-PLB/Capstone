@@ -18,6 +18,7 @@ type EventRecieved struct {
 	UserId        primitive.ObjectID `bson:"user_id,omitempty"`     //what user is this associated too
 	VendorName    string             `bson:"vendor_name,omitempty"` //Vendor name of who sent us the event
 	VendorId      string             `bson:"vendor_id,omitempty"`
+	CorrelationId   string             `bson:"correlation_id,omitempty"`           //list of entities effected or created from action
 	Type          string             `bson:"type,omitempty"` //type of event
 }
 
@@ -34,7 +35,7 @@ func (obj *EventRecieved) UpdateObjectInfo() {
 	now := time.Now()
 	if obj.CommonFields == nil {
 		obj.CommonFields = new(CommonFields)
-		obj.EntityType = ACTION_TAKEN_TYPE
+		obj.EntityType = EVENT_RECIEVED_TYPE
 		obj.CreatedAt = now
 	}
 	obj.UpdatedAt = now
@@ -64,7 +65,7 @@ func (obj *ActionTaken) UpdateObjectInfo() {
 	now := time.Now()
 	if obj.CommonFields == nil {
 		obj.CommonFields = new(CommonFields)
-		obj.EntityType = EVENT_RECIEVED_TYPE
+		obj.EntityType = ACTION_TAKEN_TYPE
 		obj.CreatedAt = now
 	}
 	obj.UpdatedAt = now
